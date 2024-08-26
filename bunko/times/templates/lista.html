@@ -1,0 +1,28 @@
+{% extends 'base_forms.html' %}
+
+{% block titulo %}{{this_lista.listname}}{% endblock %}
+
+{% block contenido %}
+<article>
+	<h4>{{this_lista.listname}} ({{this_lista.lecturas}}/{{this_lista.conteo}})</h4>
+
+	{{this_lista.info|linebreaks}}
+
+	  <ul class="list-group">
+        {% for l in this_books %}
+          <li class="list-group-item d-flex align-items-left">
+          {% if l.bbook.rhist > 0 %}&#9989;{%endif%} <a href="{% url 'book' l.bbook.id %}" style="color:black; text-decoration: none;"> 
+          &nbsp;{{l.bbook.titulo}}</a>&nbsp;|&nbsp;{{l.bbook.authors_links|safe}}
+          </li>
+        {% endfor %}
+      </ul>
+
+
+</article>
+
+<br>
+
+
+
+
+{% endblock%}

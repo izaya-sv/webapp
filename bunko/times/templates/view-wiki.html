@@ -1,0 +1,96 @@
+{% extends 'base_forms.html' %}
+
+{% block titulo %}{{this_wiki.title}}{% endblock %}
+
+{% block contenido %}
+
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Info</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Admin</button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+  	<br>
+  	<article class="blog-post">
+		<h4>{{this_wiki.title}} <br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{this_wiki.wtype.category|capfirst}} | {{this_wiki.updated_at|date:"M d, Y"}}</small></h4>
+
+		{{this_wiki.cleantext|safe|linebreaks}}
+
+
+		{% if creditos %}
+		<h4>Books</h4>
+
+		  <ul class="list-group">
+        {% for l in creditos %}
+          <li class="list-group-item d-flex align-items-left">
+            {% if l.rhist > 0 %}&#9989;{%endif%} <a href="{% url 'book' l.id %}" style="color:black; text-decoration: none;"> {{l.titulo}}</a>
+          </li>
+        {% endfor %}
+      </ul>
+		{% endif %}
+
+	</article>
+  </div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+  	<br>
+  	<h4>Add to collection</h4>
+
+	<form method="POST" action="{% url 'appendwiki' %}">
+	  {% csrf_token %}
+	  <div class="row">
+	  <div class="form-group">
+	    <label for="exampleFormControlSelect1">Page</label>
+	    <select class="form-control" name="pageid" id="exampleFormControlSelect1">
+	    	{% for p in paginas %}
+	      		<option value = "{{p.id}}">{{p.titulo}}</option>
+	    	{% endfor %}
+	    </select>
+	  </div>
+	</div>
+	  <br>
+	  <input type="hidden" value = "{{this_wiki.id}}" name="wikiid">
+	  <button type="submit" class="btn btn-primary">Add to collection</button>
+	</form>
+
+	<br>
+	<h4>Edit Article</h4>
+	<form method="POST" action="{% url 'fastedit' %}">
+	  {% csrf_token %}
+	  <div class="form-group">	
+	    <label for="exampleFormControlInput1">Title</label>
+	    <input type = "text" name="title" value="{{this_wiki.title}}" class="form-control" id="exampleFormControlInput1">
+	  </div>
+	  <br>
+	  <div class="form-group">
+	    <label for="exampleFormControlSelect1">Category</label>
+	    <select class="form-control" name="cat_id" id="exampleFormControlSelect1">
+	    	{% for w in wtypes %}
+	      		<option value = "{{w.id}}" {% if this_wiki.wtype.id == w.id %} selected {%endif%}>{{w.category}}</option>
+	    	{% endfor %}
+	    </select>
+	  </div>
+	  <br>
+	  <div class="form-group">
+	    <label for="exampleFormControlTextarea1">Content</label>
+	    <textarea name = "info" class="form-control" id="exampleFormControlTextarea1" rows="3">{{this_wiki.info}}</textarea>
+	  </div>
+	  <br>
+	  <input type="hidden" name="wikiid" value="{{this_wiki.id}}">
+	  <input type="hidden" name="origen" value="wiki_1">
+	  <button type="submit" class="btn btn-primary">Save Changes</button>
+	</form>
+	<br>
+	<h5>Img Embedding</h5>
+	&lt;img src='/media/wiki_media/' style='width:100%; border:1px solid grey; float:left;'&gt;
+	<br>
+  </div>
+</div>
+
+
+
+{% endblock%}

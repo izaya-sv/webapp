@@ -1,0 +1,182 @@
+{% extends 'base_forms.html' %}
+
+{% block titulo %}{{this_book.title}}{% endblock %}
+
+{% block contenido %}
+
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Info</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Hist</button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+  	<br>
+  	<article class="blog-post">
+	<h4>{{this_book.titulo}} <br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{this_book.wtype.category|capfirst}} | {{this_book.authors_links|safe}}</small></h4>
+
+	{% if barras %}
+		{%for b in barras%}
+		<b>Progress: {{b.avance}}/{{b.cantidad}} ({{b.prct_prog}}%)</b>
+			<div class="progress">
+
+          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width:{{b.prct_prog}}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+       </div>
+       	<form method="POST" action="{% url 'saveprogress' %}">
+					  {% csrf_token %}
+					  <div class="row">
+					  <div class="form-group col-sm-4">	
+					    <label for="exampleFormControlInput1">Date</label>
+					    <input type = "text" value="{% now 'Y-m-d' %}" name="fecha" class="form-control" id="exampleFormControlInput1">
+					  </div>
+					  <div class="form-group col-sm-4">	
+					    <label for="exampleFormControlInput1">Progress</label>
+					    <input type = "text" name="progress" class="form-control" id="exampleFormControlInput1">
+					  </div>
+					  <div class="form-group col-sm-4">	
+					   <br>
+					    <button type="submit" class="btn btn-primary" style="width:100%">Save Progress</button>
+					   
+					  </div>
+					
+					</div>
+					  <br>
+					  <input type="hidden" value = "{{b.id}}" name="barraid">
+					  <input type="hidden" value = "{{this_book.id}}" name="bookid">
+					</form>
+		{%endfor%}
+	{%endif%}
+
+	{{this_book.cleantext|linebreaks}}
+
+
+{% if relw %}
+			<h5>Related Wikis</h5>
+			<div class="row" data-masonry='{"percentPosition": true }'>
+			{% for a in relw %}
+			<div class="col-sm-6 col-lg-12 mb-4">
+			      <div class="card">
+			        <div class="card-body">
+			          <h5 class="card-title"><a href='{% url "wiki" a.mwiki.id  %}' style="text-decoration: none;">{{a.mwiki.title}}</a>
+			          	<br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{a.mwiki.wtype.category|capfirst}} | {{a.mwiki.updated_at|date:"M d, Y"}}</small></h5>
+			          <p class="card-text">{{a.mwiki.headtext}}</p>
+			        </div>
+			      </div>
+			       </div>
+			{% endfor %}
+			</div>
+			{%endif%}
+
+</article>
+  </div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+  	<br>
+  	<h5>Add Progress Bar</h5>
+  	<form method="POST" action="{% url 'addprogressbar' %}">
+	  {% csrf_token %}
+	  <div class="row">
+	  <div class="form-group col-sm-4">	
+	    <label for="exampleFormControlInput1">Start Date:</label>
+	    <input type = "text" value="{% now 'Y-m-d' %}" name="start_date" class="form-control" id="exampleFormControlInput1">
+	  </div>
+	  <div class="form-group col-sm-4">
+	    <label for="exampleFormControlSelect1">Units</label>
+	    <select class="form-control" name="units" id="exampleFormControlSelect1">
+	      		<option value = "pages">Pages</option>
+	      		<option value = "chapters">Chapaters</option>
+	    </select>
+	  </div>
+	  <div class="form-group col-sm-4">	
+	    <label for="exampleFormControlInput1">Cantidad:</label>
+	    <input type = "text" name="cantidad" class="form-control" id="exampleFormControlInput1">
+	  </div>
+	  
+	</div>
+	  <br>
+	  <input type="hidden" name="book_id" value="{{this_book.id}}">
+	  <button type="submit" class="btn btn-primary">Add Progress Bar</button>
+	</form>
+  	<br>
+  	<h4>Add consumo</h4>
+
+	<form method="POST" action="{% url 'readbook' %}">
+	  {% csrf_token %}
+	  <div class="row">
+	  <div class="form-group col-sm-4">	
+	    <label for="exampleFormControlInput1">Start</label>
+	    <input type = "text" name="start_d" class="form-control" id="exampleFormControlInput1">
+	  </div>
+	  <div class="form-group col-sm-4">	
+	    <label for="exampleFormControlInput1">Finish</label>
+	    <input type = "text" name="finish_d" class="form-control" id="exampleFormControlInput1">
+	  </div>
+	  <div class="form-group col-sm-4">	
+	    <label for="exampleFormControlInput1">Pages</label>
+	    <input type = "text" name="pages" class="form-control" id="exampleFormControlInput1">
+	  </div>
+	</div>
+	  <br>
+	  <input type="hidden" value = "{{this_book.id}}" name="bookid">
+	  <button type="submit" class="btn btn-primary">Add Consumo</button>
+	</form>
+<br>
+<h4>Add to list</h4>
+<br>
+<hr>
+<form method="POST" action="{% url 'addbooktolist' %}">
+	  {% csrf_token %}
+
+	  <div class="form-group">
+	    <label for="exampleFormControlSelect1">Book List</label>
+	    <select class="form-control" name="lista_id" id="exampleFormControlSelect1">
+	    	{% for w in blistas %}
+	      		<option value = "{{w.id}}">{{w.listname}}</option>
+	    	{% endfor %}
+	    </select>
+	  </div>
+	  <br>
+	  <input type="hidden" name="book_id" value="{{this_book.id}}">
+	  <button type="submit" class="btn btn-primary">Add to this list</button>
+	</form>
+	<br>
+	<hr>
+	<h4>Add Related Wiki</h4>
+
+	<form method="POST" action="{% url 'addnewrelwiki' %}">
+	  {% csrf_token %}
+	  <div class="form-group">	
+	    <label for="exampleFormControlInput1">Title</label>
+	    <input type = "text" name="title" class="form-control" id="exampleFormControlInput1">
+	  </div>
+	  <br>
+	  <div class="form-group">
+	    <label for="exampleFormControlSelect1">Category</label>
+	    <select class="form-control" name="cat_id" id="exampleFormControlSelect1">
+	    	{% for w in wtypes %}
+	      		<option value = "{{w.id}}">{{w.category}}</option>
+	    	{% endfor %}
+	    </select>
+	  </div>
+	  <br>
+	  <div class="form-group">
+	    <label for="exampleFormControlTextarea1">Content</label>
+	    <textarea name = "info" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+	  </div>
+	  <br>
+	  <input type="hidden" name="media_type" value="1">
+	  <input type="hidden" name="media_id" value="{{this_book.id}}">
+	  <button type="submit" class="btn btn-primary">Add Entry</button>
+	</form>
+  </div>
+</div>
+
+
+
+
+
+
+{% endblock%}

@@ -1,0 +1,38 @@
+{% extends 'base_forms.html' %}
+
+{% block titulo %}Add New Wiki Entry{% endblock %}
+
+{% block contenido %}
+<article>
+	<h4>Add New Entry</h4>
+
+	<form method="POST">
+	  {% csrf_token %}
+	  <div class="form-group">	
+	    <label for="exampleFormControlInput1">Title</label>
+	    <input type = "text" name="title" class="form-control" id="exampleFormControlInput1">
+	  </div>
+	  <br>
+	  <div class="form-group">
+	    <label for="exampleFormControlSelect1">Category</label>
+	    <select class="form-control" name="cat_id" id="exampleFormControlSelect1">
+	    	{% for w in wtypes %}
+	      		<option value = "{{w.id}}">{{w.category}}</option>
+	    	{% endfor %}
+	    </select>
+	  </div>
+	  <br>
+	  <div class="form-group">
+	    <label for="exampleFormControlTextarea1">Content</label>
+	    <textarea name = "info" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+	  </div>
+	  <br>
+	  <button type="submit" class="btn btn-primary">Add Entry</button>
+	</form>
+
+</article>
+
+
+
+
+{% endblock%}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}The Times | Home{% endblock %}
+
+{% block contenido %}
+
+<script src="{% static 'js/masonry.pkgd.min.js' %}" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
+
+
+<div class="row" data-masonry='{"percentPosition": true }'>
+  {% if on_reading %}
+  {% for r in on_reading %}
+  <div class="col-sm-6 col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><a href='{% url "book" r.libro.id  %}' style="text-decoration: none;"><span style="color:grey;">[Now Reading]</span><br> {{r.libro.titulo}}</a>
+            <br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{r.libro.wtype.category|capfirst}} | {{r.libro.authors_links|safe}}</small></h5>
+          <p class="card-text">{{r.libro.headtext}}</p>
+        </div>
+      </div>
+       </div>
+  {% endfor %}
+  {%  endif %}
+  {% if now_watching %}
+  {% for r in now_watching %}
+  <div class="col-sm-6 col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><a href='{% url "show" r.temporada.show.id  %}' style="text-decoration: none;"><span style="color:grey;">[Now Watching]</span><br>{{r.temporada.titulo}}</a></h5>
+          <p class="card-text">{{r.temporada.headtext}}</p>
+        </div>
+      </div>
+       </div>
+  {% endfor %}
+  {%  endif %}
+{% for a in articles %}
+<div class="col-sm-6 col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><a href='{% url "wiki" a.id  %}' style="text-decoration: none;">{{a.title}}</a>
+          	<br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{a.wtype.category|capfirst}} | {{a.updated_at|date:"M d, Y"}}</small></h5>
+          <p class="card-text">{{a.headtext}}</p>
+        </div>
+      </div>
+       </div>
+{% endfor %}
+</div>
+
+
+
+{% endblock%}
+
+{% block rightbar %}
+<br>
+
+<h4>Collections</h4>
+      <ul class="list-group">
+        {% for d in dpaginas %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+          <a href="{% url 'page' d.page__id %}" style="color:black; text-decoration: none;"> {{d.page__titulo}}</a>
+            <span class="badge bg-primary rounded-pill">{{d.qitems}}</span>
+          </li>
+        {% endfor %}
+      </ul>
+  <br>
+
+<h4>Authors</h4>
+      <ul class="list-group">
+        {% for d in authors %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+          <a href="{% url 'wiki' d.persona__id %}" style="color:black; text-decoration: none;"> {{d.persona__title}}</a>
+            <span class="badge bg-primary rounded-pill">{{d.qbooks}}</span>
+          </li>
+        {% endfor %}
+      </ul>
+{% endblock %}

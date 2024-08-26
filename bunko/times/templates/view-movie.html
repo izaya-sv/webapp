@@ -1,0 +1,99 @@
+{% extends 'base_forms.html' %}
+
+{% block titulo %}{{this_movie.titulo}}{% endblock %}
+
+{% block contenido %}
+
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Info</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Hist</button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+  	<br>
+  	<article class="blog-post">
+	<h4>{{this_movie.titulo}} </h4>
+
+	{{this_movie.cleantext|linebreaks}}
+
+		{% if relw %}
+			<h5>Related Wikis</h5>
+			<div class="row" data-masonry='{"percentPosition": true }'>
+			{% for a in relw %}
+			<div class="col-sm-6 col-lg-12 mb-4">
+			      <div class="card">
+			        <div class="card-body">
+			          <h5 class="card-title"><a href='{% url "wiki" a.mwiki.id  %}' style="text-decoration: none;">{{a.mwiki.title}}</a>
+			          	<br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{a.mwiki.wtype.category|capfirst}} | {{a.mwiki.updated_at|date:"M d, Y"}}</small></h5>
+			          <p class="card-text">{{a.mwiki.headtext}}</p>
+			        </div>
+			      </div>
+			       </div>
+			{% endfor %}
+			</div>
+			{%endif%}
+</article>
+  </div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+  	<br>
+  	<h4>Add consumo</h4>
+
+	<form method="POST" action="{% url 'watchmovie' %}">
+	  {% csrf_token %}
+	  <div class="row">
+	  <div class="form-group col-sm-6">	
+	    <label for="exampleFormControlInput1">Watch Date</label>
+	    <input type = "text" name="start_d" class="form-control" id="exampleFormControlInput1">
+	  </div>
+	  <div class="form-group col-sm-6">	
+	   <br>
+	    <button type="submit" class="btn btn-primary">Add Consumo</button>
+	   
+	  </div>
+	
+	</div>
+	  <br>
+	  <input type="hidden" value = "{{this_movie.id}}" name="movieid">
+	</form>
+<br>
+	<h4>Add Related Wiki</h4>
+
+	<form method="POST" action="{% url 'addnewrelwiki' %}">
+	  {% csrf_token %}
+	  <div class="form-group">	
+	    <label for="exampleFormControlInput1">Title</label>
+	    <input type = "text" name="title" class="form-control" id="exampleFormControlInput1">
+	  </div>
+	  <br>
+	  <div class="form-group">
+	    <label for="exampleFormControlSelect1">Category</label>
+	    <select class="form-control" name="cat_id" id="exampleFormControlSelect1">
+	    	{% for w in wtypes %}
+	      		<option value = "{{w.id}}">{{w.category}}</option>
+	    	{% endfor %}
+	    </select>
+	  </div>
+	  <br>
+	  <div class="form-group">
+	    <label for="exampleFormControlTextarea1">Content</label>
+	    <textarea name = "info" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+	  </div>
+	  <br>
+	  <input type="hidden" name="media_type" value="2">
+	  <input type="hidden" name="media_id" value="{{this_movie.id}}">
+	  <button type="submit" class="btn btn-primary">Add Entry</button>
+	</form>
+  </div>
+</div>
+
+
+
+
+
+
+{% endblock%}
