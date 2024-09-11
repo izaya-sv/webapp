@@ -14,12 +14,18 @@
     <div class="row" data-masonry='{"percentPosition": true }'>
 
         {% for r in rqueue %}
-        <div class="col-sm-6 col-lg-6 mb-4">
+        <div class="col-sm-3 col-lg-3 mb-3">
               <div class="card">
+                 {% if r.mainPic %}
+                    <img class="bd-placeholder-img card-img-top" width="100%" src="{{r.mainPic}}">
+                 {%endif%}
                 <div class="card-body">
+                  
                   <h5 class="card-title"><a href='{% url "book" r.id  %}' style="text-decoration: none;">{{r.titulo}}</a>
                     <br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{r.wtype.category|capfirst}} | {{r.authors_links|safe}}</small></h5>
+                    {% if r.mainPic == None %}
                   <p class="card-text">{{r.headtext}}</p>
+                   {%endif%}
                 </div>
               </div>
                </div>

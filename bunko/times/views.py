@@ -91,15 +91,16 @@ def homepage(request):
 	nlist = 16
 	npics = Wiki.objects.all().count()
 	npages = math.ceil(npics/nlist)
-	articles = Wiki.objects.all().order_by('-updated_at')[0:nlist]
+	articles = Wiki.objects.all().exclude(wtype__id=1).exclude(id=42).order_by('-updated_at')[0:nlist]
+	pinned_posts = Wiki.objects.filter(id=42)
 	on_reading = ProgressBar.objects.filter(avance__lt=F('cantidad'))
 	now_watching = SeasonProgressBar.objects.filter(avance__lt=F('temporada__episodes'))
 
-	authors = Credito.objects.filter(ctype__id=1,media_type=1).exclude(persona__id__in = [3,26]).values('persona__title','persona__id').annotate(qbooks=Count('media_id')).order_by('-qbooks')
+	authors = Credito.objects.filter(ctype__id=1,media_type=1).exclude(persona__id__in = [36,40]).values('persona__title','persona__id').annotate(qbooks=Count('media_id')).order_by('-qbooks')
 
 	dpaginas = PageRels.objects.values('page__titulo','page__id').annotate(qitems = Count('page__id'), lastup=Max('child__updated_at')).order_by('-lastup')[0:50]
 
-	return render(request,'homepage.html',{'articles':articles,'dpaginas':dpaginas,'npages':range(npages),'on_reading':on_reading,'now_watching':now_watching	,'authors':authors})
+	return render(request,'homepage.html',{'articles':articles,'pinned_posts':pinned_posts,'dpaginas':dpaginas,'npages':range(npages),'on_reading':on_reading,'now_watching':now_watching	,'authors':authors})
 
 def addbook(request):
 	personas = Wiki.objects.filter(wtype__category='persona').order_by('title')
@@ -115,8 +116,14 @@ def addbook(request):
 
 		newB = Book.objects.create(title = btitle,orig_lan = origlan,info=binfo, pub_year=pubyear, wtype=btype)
 		newB.save()
-
-		credtype = CreditType.objects.get(pk=1)
+		if btype.id == 9:
+		    credtype = CreditType.objects.get(pk=1)
+		elif btype.id == 10:
+		    credtype = CreditType.objects.get(pk=7)
+		elif btype.id == 11:
+		    credtype = CreditType.objects.get(pk=5)
+		elif btype.id == 12:
+		    credtype = CreditType.objects.get(pk=6)
 
 		newC = Credito.objects.create(ctype=credtype, persona = autor, media_type=1, media_id=newB.id)
 
@@ -353,7 +360,7 @@ def booklists(request):
 
 def booklist(request,lid):
 	this_lista = BookList.objects.get(pk=int(lid))
-	this_books = RelBookList.objects.filter(blist=this_lista).order_by('bbook__pub_year')
+	this_books = RelBookList.objects.filter(blist=this_lista).order_by('id')
 	return render(request,'lista.html',{'this_lista':this_lista,'this_books':this_books})
 
 def addprogressbar(request):
@@ -462,3 +469,14 @@ def saveshowprogress(request):
 		newC.save()
 
 	return redirect('/show/{}'.format(show.id))
+
+def addbookmedia(request):
+	bid = request.POST.get("media_id")
+	this_book = Book.objects.get(pk=int(bid))
+	ix = request.FILES.get("imagen")
+	img_type = int(request.POST.get("img_type"))
+
+	newM = BookMedia.objects.create(libro=this_book,imgtype=img_type,imagen=ix)
+	newM.save()
+
+	return redirect('/book/{}'.format(this_book.id))

@@ -34,6 +34,17 @@
        </div>
   {% endfor %}
   {%  endif %}
+  {% for a in pinned_posts %}
+<div class="col-sm-6 col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><a href='{% url "wiki" a.id  %}' style="text-decoration: none;">{{a.title}}</a>
+          	<br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{a.wtype.category|capfirst}} | {{a.updated_at|date:"M d, Y"}}</small></h5>
+          <p class="card-text">{{a.headtext}}</p>
+        </div>
+      </div>
+       </div>
+{% endfor %}
 {% for a in articles %}
 <div class="col-sm-6 col-lg-6 mb-4">
       <div class="card">

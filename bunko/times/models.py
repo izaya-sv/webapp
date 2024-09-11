@@ -1,11 +1,12 @@
 from django.db import models
-from datetime import datetime,date
+from datetime import datetime
 from django.db import models
 from django.utils import timezone
 import os
 from uuid import uuid4
 from django.db.models import Q, Avg, Count, Min, Sum
 from random import choice
+
 
 def path_and_name(instance, filename):
     upload_to = 'wiki_media'
@@ -102,6 +103,16 @@ class Book(models.Model):
 			rcheck = 1
 		return rcheck
 
+	@property
+	def mainPic(self):
+		npics = BookMedia.objects.filter(libro__id=self.id,imgtype=1).count()
+		if npics == 0:
+			return None
+		else:
+			pks = BookMedia.objects.filter(libro__id=self.id,imgtype=1).values_list('pk', flat=True)
+			random_pk = choice(pks)
+			ppic = BookMedia.objects.get(pk=random_pk)
+			return ppic.imagen.url
 
 
 class CreditType(models.Model):
@@ -364,6 +375,30 @@ class SeasonProgressLog(models.Model):
 
 	def __str__(self):
 		return str(self.id)+'-'+self.barra.temporada.titulo
+
+class BookMedia(models.Model):
+	libro = models.ForeignKey(Book,on_delete=models.CASCADE)
+	imgtype = models.IntegerField()
+	imagen = models.ImageField(upload_to=path_and_name, max_length=255, null=True, blank=True)
+
+	def __str__(self):
+		return self.libro.titulo
+
+class MovieMedia(models.Model):
+	film = models.ForeignKey(Movie,on_delete=models.CASCADE)
+	imgtype = models.IntegerField()
+	imagen = models.ImageField(upload_to=path_and_name, max_length=255, null=True, blank=True)
+
+	def __str__(self):
+		return self.film.titulo
+
+class ItemMedia(models.Model):
+	item = models.ForeignKey(Wiki,on_delete=models.CASCADE)
+	imgtype = models.IntegerField()
+	imagen = models.ImageField(upload_to=path_and_name, max_length=255, null=True, blank=True)
+
+	def __str__(self):
+		return self.item.title
 
 
 

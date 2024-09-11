@@ -17,6 +17,7 @@
             },
 
             axisY: {
+              minimum: 0,
               title: "",
               stripLines: [{
                 value: 240,
@@ -34,7 +35,7 @@
               dataPoints: {{ data_points }}
             }]
           });
-         
+
         chart1.render();
       }
        </script>
@@ -42,21 +43,5 @@
     </article>
 
 <br>
-<h4>Manga Chapers</h4>
-
-<table class="table table-striped" style="width:50%;">
-          <thead>
-          <tr>
-            <th scope="col">Semana</th>
-            <th scope="col" style="text-align:right;">Capitulos</th>
-          </tr>
-  </thead>
-
-{% for c in capitulos %}
-<tr><td>{{c.fecha}}</td><td>{{c.paginas}}</td></tr>
-{% endfor %}
-</table>
-
-
 
 {% endblock%}

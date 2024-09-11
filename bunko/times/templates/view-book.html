@@ -50,7 +50,7 @@
 					</form>
 		{%endfor%}
 	{%endif%}
-
+	  {% if this_book.mainPic %}<img src="{{this_book.mainPic}}" style="border:1px solid grey; float:left; width:30%; margin-right: 16px; margin-bottom: 16px;">{% endif %}
 	{{this_book.cleantext|linebreaks}}
 
 
@@ -171,6 +171,31 @@
 	  <input type="hidden" name="media_id" value="{{this_book.id}}">
 	  <button type="submit" class="btn btn-primary">Add Entry</button>
 	</form>
+
+	<h4>Add Media</h4>
+
+	<form method="POST" enctype="multipart/form-data" action="{% url 'addbookmedia' %}">
+	  {% csrf_token %}
+	  
+	  <div class="form-group">
+	    <label for="exampleFormControlSelect1">Media Type</label>
+	    <select class="form-control" name="img_type" id="exampleFormControlSelect1">
+	      		<option value = "1">Cover</option>
+	      		<option value = "2">Portrait</option>
+	      		<option value = "3">Panorama</option>
+	    </select>
+	  </div>
+	  <br>
+	  <div class="form-group">
+    	<label for="exampleFormControlFile1">File</label>
+    	<input type="file" name = "imagen" class="form-control-file" id="exampleFormControlFile1">
+  	</div>
+	  <br>
+	  <input type="hidden" name="media_type" value="1">
+	  <input type="hidden" name="media_id" value="{{this_book.id}}">
+	  <button type="submit" class="btn btn-primary">Add Entry</button>
+	</form>
+
   </div>
 </div>
 

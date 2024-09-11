@@ -21,6 +21,7 @@ admin.site.register(ProgressBar)
 admin.site.register(ProgressLog)
 admin.site.register(SeasonProgressBar)
 admin.site.register(SeasonProgressLog)
+admin.site.register(BookMedia)
 
 
 

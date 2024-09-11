@@ -42,6 +42,7 @@ urlpatterns = [
 	path('search/', views.busqueda, name='search'),
 	path('kindlePublish/<p>', views.htmlPublish, name='kindlePublish'),
 	path('saveshowprogress/', views.saveshowprogress, name='saveshowprogress'),
+	path('addbookmedia/', views.addbookmedia, name='addbookmedia'),
 
 
 	]

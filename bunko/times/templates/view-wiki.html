@@ -27,7 +27,7 @@
 
 		  <ul class="list-group">
         {% for l in creditos %}
-          <li class="list-group-item d-flex align-items-left">
+          <li class="list-group-item">
             {% if l.rhist > 0 %}&#9989;{%endif%} <a href="{% url 'book' l.id %}" style="color:black; text-decoration: none;"> {{l.titulo}}</a>
           </li>
         {% endfor %}
@@ -61,7 +61,7 @@
 	<h4>Edit Article</h4>
 	<form method="POST" action="{% url 'fastedit' %}">
 	  {% csrf_token %}
-	  <div class="form-group">	
+	  <div class="form-group">
 	    <label for="exampleFormControlInput1">Title</label>
 	    <input type = "text" name="title" value="{{this_wiki.title}}" class="form-control" id="exampleFormControlInput1">
 	  </div>
