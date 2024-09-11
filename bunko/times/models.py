@@ -157,6 +157,18 @@ class Movie(models.Model):
 		else:
 			return self.info.replace('==headtext==','')
 
+	@property
+	def mainPic(self):
+		npics = MovieMedia.objects.filter(film__id=self.id,imgtype=1).count()
+		if npics == 0:
+			return None
+		else:
+			pks = MovieMedia.objects.filter(film__id=self.id,imgtype=1).values_list('pk', flat=True)
+			random_pk = choice(pks)
+			ppic = MovieMedia.objects.get(pk=random_pk)
+			return ppic.imagen.url
+
+
 class Show(models.Model):
 	title = models.CharField(max_length=512)
 	info = models.TextField()

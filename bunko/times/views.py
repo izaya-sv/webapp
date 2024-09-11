@@ -480,3 +480,15 @@ def addbookmedia(request):
 	newM.save()
 
 	return redirect('/book/{}'.format(this_book.id))
+
+
+def addfilmmedia(request):
+	bid = request.POST.get("media_id")
+	this_movie = Movie.objects.get(pk=int(bid))
+	ix = request.FILES.get("imagen")
+	img_type = int(request.POST.get("img_type"))
+
+	newM = MovieMedia.objects.create(film=this_movie,imgtype=img_type,imagen=ix)
+	newM.save()
+
+	return redirect('/movie/{}'.format(this_movie.id))

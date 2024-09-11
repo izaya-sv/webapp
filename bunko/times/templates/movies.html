@@ -12,12 +12,17 @@
 
      <div class="row" data-masonry='{"percentPosition": true }'>
         {% for a in wmovies %}
-        <div class="col-sm-4 col-lg-6 mb-4">
+        <div class="col-sm-6 col-lg-3 mb-3">
               <div class="card">
+                {% if a.film.mainPic %}
+                    <img class="bd-placeholder-img card-img-top" width="100%" src="{{a.film.mainPic}}">
+                 {%endif%}
                 <div class="card-body">
                   <h5 class="card-title"><a href='{% url "movie" a.film.id  %}' style="text-decoration: none;">{{a.film.titulo}}</a>
                     <br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{a.wdate}}</small></h5>
+                    {% if a.film.mainPic %}
                   <p class="card-text">{{a.film.headtext}}</p>
+                  {% endif %}
                 </div>
               </div>
                </div>

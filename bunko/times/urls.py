@@ -43,6 +43,7 @@ urlpatterns = [
 	path('kindlePublish/<p>', views.htmlPublish, name='kindlePublish'),
 	path('saveshowprogress/', views.saveshowprogress, name='saveshowprogress'),
 	path('addbookmedia/', views.addbookmedia, name='addbookmedia'),
+	path('addfilmmedia/', views.addfilmmedia, name='addfilmmedia'),
 
 
 	]
