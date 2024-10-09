@@ -11,7 +11,7 @@
 	  <ul class="list-group">
         {% for l in this_books %}
           <li class="list-group-item">
-          {% if l.bbook.rhist > 0 %}&#9989;{%endif%} <a href="{% url 'book' l.bbook.id %}" style="color:black; text-decoration: none;">
+          {% if l.bbook.rhist > 0 %}&#9989;{%else%}&#11036;{%endif%} <a href="{% url 'book' l.bbook.id %}" style="color:black; text-decoration: none;">
           &nbsp;{{l.bbook.titulo}}</a>&nbsp;|&nbsp;{{l.bbook.authors_links|safe}}
           </li>
         {% endfor %}

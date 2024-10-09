@@ -14,13 +14,11 @@
         {% for a in twmovies %}
         <div class="col-sm-6 col-lg-3 mb-3">
               <div class="card">
-                {% if a.mainPic %}
-                    <img class="bd-placeholder-img card-img-top" width="100%" src="{{a.mainPic}}">
-                 {%endif%}
+
                 <div class="card-body">
                   <h5 class="card-title"><a href='{% url "movie" a.id  %}' style="text-decoration: none;">{{a.titulo}}</a></h5>
-                  {% if a.mainPic == None %}
-                  <p class="card-text">{{a.headtext}}</p>{% endif %}
+
+                  <p class="card-text">{{a.headtext}}</p>
                 </div>
               </div>
                </div>

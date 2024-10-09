@@ -91,7 +91,7 @@ def homepage(request):
 	nlist = 16
 	npics = Wiki.objects.all().count()
 	npages = math.ceil(npics/nlist)
-	articles = Wiki.objects.all().exclude(wtype__id=1).exclude(id=42).order_by('-updated_at')[0:nlist]
+	articles = Wiki.objects.all().exclude(wtype__id__in=[1,2,3,4,5]).exclude(id=42).order_by('-updated_at')[0:nlist]
 	pinned_posts = Wiki.objects.filter(id=42)
 	on_reading = ProgressBar.objects.filter(avance__lt=F('cantidad'))
 	now_watching = SeasonProgressBar.objects.filter(avance__lt=F('temporada__episodes'))
@@ -141,12 +141,18 @@ def book(request,bookid):
 
 	return render(request,'view-book.html',{'this_book':this_book,'wtypes':wtypes,'relw':related_wikis,'blistas':listas,'barras':barras})
 
-def books(request):
+def books(request,y):
+	max_year = Consumo.objects.order_by('-finish_d').first()
 
+	if int(y)==1:
+		y = max_year.finish_d.strftime('%Y')
+
+	conteo = Consumo.objects.filter(volume__wtype__id=9).count()
+	anhos = Consumo.objects.filter(volume__wtype__id=9).values('finish_d__year').annotate(qbooks=Count('id')).order_by('-finish_d__year')
 	rqueue = Book.objects.filter(consumo__volume__isnull=True, wtype__id=9).order_by('pub_year')
-	rhist = Consumo.objects.filter(volume__wtype__id=9).order_by('-finish_d','-id')
+	rhist = Consumo.objects.filter(volume__wtype__id=9,finish_d__year=int(y)).order_by('-finish_d','-id')
 
-	return render(request,'books.html',{'rhist':rhist,'rqueue':rqueue})
+	return render(request,'view-history.html',{'rhist':rhist,'rqueue':rqueue,'anhos':anhos,'anho':y,'conteo':conteo})
 
 def bqueue(request):
 
@@ -231,9 +237,18 @@ def watchmovie(request):
 
 	return redirect('/movie/{}'.format(wmovie.id))
 
-def movies(request):
-	wmovies = MovieWatch.objects.all().order_by('-wdate')
-	return render(request,'movies.html',{'wmovies':wmovies})
+def movies(request,y):
+
+	max_year = MovieWatch.objects.order_by('-wdate').first()
+
+	if int(y)==1:
+		y = max_year.wdate.strftime('%Y')
+
+	conteo = MovieWatch.objects.count()
+	anhos = MovieWatch.objects.values('wdate__year').annotate(qbooks=Count('id')).order_by('-wdate__year')
+
+	wmovies = MovieWatch.objects.filter(wdate__year=int(y)).order_by('-wdate')
+	return render(request,'movie-history.html',{'wmovies':wmovies,'anho':int(y),'conteo':conteo,'anhos':anhos})
 
 def mqueue(request):
 	twmovies = Movie.objects.filter(moviewatch__film__isnull=True).order_by('premiere')

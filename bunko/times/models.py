@@ -85,7 +85,7 @@ class Book(models.Model):
 
 	@property
 	def authors_links(self):
-		creds = Credito.objects.filter(ctype__id=1,media_type=1,media_id=self.id)
+		creds = Credito.objects.filter(ctype__id__in=[1,5,6,7],media_type=1,media_id=self.id)
 
 		enlaces = ""
 
