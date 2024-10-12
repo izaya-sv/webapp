@@ -46,6 +46,8 @@ urlpatterns = [
 	path('addfilmmedia/', views.addfilmmedia, name='addfilmmedia'),
 	path('savepost/', views.savepost, name='savepost'),
 	path('journal/<y>', views.journal, name='journal'),
+	path('addpersona', views.addpersona, name='addpersona'),
+	path('mediastats', views.mediastats, name='mediastats'),
 
 
 	]

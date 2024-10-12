@@ -40,6 +40,21 @@ def addwiki(request):
 	else:
 		return render(request,'add-wiki.html',{'wtypes':wtypes})
 
+def addpersona(request):
+	wtypes = WikiType.objects.all().order_by('category')
+
+	if request.method == 'POST':
+		this_cat = WikiType.objects.get(pk=int(request.POST.get("cat_id")))
+		this_titulo = request.POST.get("title")
+		this_info = request.POST.get("info")
+
+		newW = Wiki.objects.create(wtype=this_cat,title=this_titulo,info=this_info,updated_at=datetime.now())
+		newW.save()
+
+		return redirect('/wiki/{}'.format(newW.id))
+	else:
+		return render(request,'add-persona.html',{'wtypes':wtypes})
+
 def editwiki(request,wikiid):
 	this_wiki = Wiki.objects.get(pk=int(wikiid))
 	wtypes = WikiType.objects.all()
@@ -528,3 +543,76 @@ def journal(request,y):
 	anhos = Wiki.objects.filter(wtype__id=8).values('updated_at__year').annotate(qitems=Count('id')).order_by('-updated_at__year')
 	posts = Wiki.objects.filter(wtype__id=8,updated_at__year=int(y)).order_by('-updated_at','id')
 	return render(request,'journal.html',{'posts':posts,'anhos':anhos,'anho':int(y)})
+
+
+
+def mediastats(request):
+
+	paginas = SeasonProgressLog.objects.raw("""
+			with todo as (select 
+			    1 as id,
+			    'shows' type,
+			    strftime('%Y',date(a.fecha,'weekday 0')) as anho,
+			    1*strftime('%m',date(a.fecha,'weekday 0'))-1 as mes,
+			    1*strftime('%d',date(a.fecha,'weekday 0')) as dia,
+			    round(sum(a.delta_lec*c.avg_runtime/60.0),1) as horas ,
+			    date(a.fecha,'weekday 0') fecha
+			from 
+			    times_seasonprogresslog a
+			    left join times_seasonprogressbar b
+			    on a.barra_id = b.id
+			    left join times_season c
+			    on b.temporada_id = c.id
+			where
+			    a.fecha >= '2024-10-01'
+			group by
+			    strftime('%Y',date(a.fecha,'weekday 0')),
+			    1*strftime('%m',date(a.fecha,'weekday 0'))-1,
+			    1*strftime('%d',date(a.fecha,'weekday 0')),
+			    date(a.fecha,'weekday 0') 
+
+			union all
+
+			select 
+			    1 as id,
+			    'movies' type,
+			    strftime('%Y',date(a.wdate,'weekday 0')) as anho,
+			    1*strftime('%m',date(a.wdate,'weekday 0'))-1 as mes,
+			    1*strftime('%d',date(a.wdate,'weekday 0')) as dia,
+			    round(sum(b.runtime/60.0),1) as horas ,
+			    date(a.wdate,'weekday 0') fecha
+			from 
+			    times_moviewatch a
+			    left join times_movie b
+			    on a.film_id = b.id
+			where
+			    a.wdate >= '2024-10-01'
+			group by
+			    strftime('%Y',date(a.wdate,'weekday 0')),
+			    1*strftime('%m',date(a.wdate,'weekday 0'))-1,
+			    1*strftime('%d',date(a.wdate,'weekday 0')),
+			    date(a.wdate,'weekday 0') )
+
+			select 
+				1 as id,
+			    anho,
+			    mes,
+			    dia,
+			    fecha,
+			    sum(horas) as horas
+			from 
+			    todo
+			group by
+			    anho,
+			    mes,
+			    dia,
+			    fecha
+
+									    """)
+	data_points = "["
+	for p in paginas:
+		data_points=data_points+"{ x: new Date("+ str(p.anho) +","+ str(p.mes) +" , "+ str(p.dia) +"), y: "+str(p.horas)+" },"
+	data_points=data_points+"]"
+
+
+	return render(request, 'media-stats.html', { "data_points" : data_points })
