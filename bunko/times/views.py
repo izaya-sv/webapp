@@ -91,7 +91,7 @@ def homepage(request):
 	nlist = 16
 	npics = Wiki.objects.all().count()
 	npages = math.ceil(npics/nlist)
-	articles = Wiki.objects.all().exclude(wtype__id__in=[1,2,3,4,5]).exclude(id=42).order_by('-updated_at')[0:nlist]
+	articles = Wiki.objects.all().exclude(wtype__id__in=[1,2,3,4,5,8]).exclude(id=42).order_by('-updated_at')[0:nlist]
 	pinned_posts = Wiki.objects.filter(id=42)
 	on_reading = ProgressBar.objects.filter(avance__lt=F('cantidad'))
 	now_watching = SeasonProgressBar.objects.filter(avance__lt=F('temporada__episodes'))
@@ -507,3 +507,24 @@ def addfilmmedia(request):
 	newM.save()
 
 	return redirect('/movie/{}'.format(this_movie.id))
+
+def savepost(request):
+	fecha = request.POST.get("fecha")
+	entry = request.POST.get("entrada")
+	this_cat = WikiType.objects.get(pk=8)
+	datetime_object = datetime.strptime(fecha+' 00:00:00', '%Y-%m-%d %H:%M:%S')
+
+	newW = Wiki.objects.create(wtype=this_cat,title='No Title',info=entry,updated_at=datetime_object)
+	newW.save()
+
+	return redirect('/')
+
+def journal(request,y):
+	max_year = Wiki.objects.filter(wtype__id=8).order_by('-updated_at').first()
+
+	if int(y)==1:
+		y = max_year.updated_at.strftime('%Y')
+
+	anhos = Wiki.objects.filter(wtype__id=8).values('updated_at__year').annotate(qitems=Count('id')).order_by('-updated_at__year')
+	posts = Wiki.objects.filter(wtype__id=8,updated_at__year=int(y)).order_by('-updated_at','id')
+	return render(request,'journal.html',{'posts':posts,'anhos':anhos,'anho':int(y)})

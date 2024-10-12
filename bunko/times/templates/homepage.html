@@ -6,7 +6,26 @@
 {% block contenido %}
 
 <script src="{% static 'js/masonry.pkgd.min.js' %}" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
+<article>
+    <form method="POST" action="{% url 'savepost' %}">
+      {% csrf_token %}
+    <div class="form-group">
 
+	    <textarea name = "entrada" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+	  </div>
+	   <div class="row">
+	  <div class="form-group col-sm-6 col-lg-8 mb-8">
+	    <label for="exampleFormControlInput1">Date</label>
+	    <input type = "text" value="{% now 'Y-m-d' %}" name="fecha" class="form-control" id="exampleFormControlInput1">
+    </div>
+    <div class="form-group col-sm-6 col-lg-4 mb-4">
+        <label for="exampleFormControlInput1">&nbsp;&nbsp;</label>
+	    <button type="submit" class="btn btn-primary" style="width:100%">Post Update</button>
+	  </div>
+	  </div>
+    </form>
+</article>
+<br>
 
 <div class="row" data-masonry='{"percentPosition": true }'>
   {% if on_reading %}

@@ -44,6 +44,8 @@ urlpatterns = [
 	path('saveshowprogress/', views.saveshowprogress, name='saveshowprogress'),
 	path('addbookmedia/', views.addbookmedia, name='addbookmedia'),
 	path('addfilmmedia/', views.addfilmmedia, name='addfilmmedia'),
+	path('savepost/', views.savepost, name='savepost'),
+	path('journal/<y>', views.journal, name='journal'),
 
 
 	]

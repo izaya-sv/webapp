@@ -29,20 +29,20 @@
        	<form method="POST" action="{% url 'saveprogress' %}">
 					  {% csrf_token %}
 					  <div class="row">
-					  <div class="form-group col-sm-4">	
+					  <div class="form-group col-sm-4">
 					    <label for="exampleFormControlInput1">Date</label>
 					    <input type = "text" value="{% now 'Y-m-d' %}" name="fecha" class="form-control" id="exampleFormControlInput1">
 					  </div>
-					  <div class="form-group col-sm-4">	
+					  <div class="form-group col-sm-4">
 					    <label for="exampleFormControlInput1">Progress</label>
 					    <input type = "text" name="progress" class="form-control" id="exampleFormControlInput1">
 					  </div>
-					  <div class="form-group col-sm-4">	
+					  <div class="form-group col-sm-4">
 					   <br>
 					    <button type="submit" class="btn btn-primary" style="width:100%">Save Progress</button>
-					   
+
 					  </div>
-					
+
 					</div>
 					  <br>
 					  <input type="hidden" value = "{{b.id}}" name="barraid">
@@ -79,7 +79,7 @@
   	<form method="POST" action="{% url 'addprogressbar' %}">
 	  {% csrf_token %}
 	  <div class="row">
-	  <div class="form-group col-sm-4">	
+	  <div class="form-group col-sm-4">
 	    <label for="exampleFormControlInput1">Start Date:</label>
 	    <input type = "text" value="{% now 'Y-m-d' %}" name="start_date" class="form-control" id="exampleFormControlInput1">
 	  </div>
@@ -90,11 +90,11 @@
 	      		<option value = "chapters">Chapaters</option>
 	    </select>
 	  </div>
-	  <div class="form-group col-sm-4">	
+	  <div class="form-group col-sm-4">
 	    <label for="exampleFormControlInput1">Cantidad:</label>
 	    <input type = "text" name="cantidad" class="form-control" id="exampleFormControlInput1">
 	  </div>
-	  
+
 	</div>
 	  <br>
 	  <input type="hidden" name="book_id" value="{{this_book.id}}">
@@ -106,15 +106,15 @@
 	<form method="POST" action="{% url 'readbook' %}">
 	  {% csrf_token %}
 	  <div class="row">
-	  <div class="form-group col-sm-4">	
+	  <div class="form-group col-sm-4">
 	    <label for="exampleFormControlInput1">Start</label>
 	    <input type = "text" name="start_d" class="form-control" id="exampleFormControlInput1">
 	  </div>
-	  <div class="form-group col-sm-4">	
+	  <div class="form-group col-sm-4">
 	    <label for="exampleFormControlInput1">Finish</label>
 	    <input type = "text" name="finish_d" class="form-control" id="exampleFormControlInput1">
 	  </div>
-	  <div class="form-group col-sm-4">	
+	  <div class="form-group col-sm-4">
 	    <label for="exampleFormControlInput1">Pages</label>
 	    <input type = "text" name="pages" class="form-control" id="exampleFormControlInput1">
 	  </div>
@@ -148,7 +148,7 @@
 
 	<form method="POST" action="{% url 'addnewrelwiki' %}">
 	  {% csrf_token %}
-	  <div class="form-group">	
+	  <div class="form-group">
 	    <label for="exampleFormControlInput1">Title</label>
 	    <input type = "text" name="title" class="form-control" id="exampleFormControlInput1">
 	  </div>
@@ -176,7 +176,7 @@
 
 	<form method="POST" enctype="multipart/form-data" action="{% url 'addbookmedia' %}">
 	  {% csrf_token %}
-	  
+
 	  <div class="form-group">
 	    <label for="exampleFormControlSelect1">Media Type</label>
 	    <select class="form-control" name="img_type" id="exampleFormControlSelect1">
