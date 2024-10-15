@@ -48,6 +48,8 @@ urlpatterns = [
 	path('journal/<y>', views.journal, name='journal'),
 	path('addpersona', views.addpersona, name='addpersona'),
 	path('mediastats', views.mediastats, name='mediastats'),
+	path('addmoviecredits', views.addmoviecredits, name='addmoviecredits'),
+	path('movieperson/<strPersona>', views.movieperson, name='movieperson'),
 
 
 	]

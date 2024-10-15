@@ -240,7 +240,10 @@ def movie(request,movieid):
 	this_movie = Movie.objects.get(pk=int(movieid))
 	wtypes = WikiType.objects.all()
 	related_wikis = MediaWiki.objects.filter(media_type=2, media_id=this_movie.id).order_by('-id')
-	return render(request,'view-movie.html',{'this_movie':this_movie,'wtypes':wtypes,'relw':related_wikis})
+	director = MovieCredit.objects.filter(film__id=this_movie.id, credit = 'Director' )
+	cast = MovieCredit.objects.filter(film__id=this_movie.id, credit = 'Main Cast')
+
+	return render(request,'view-movie.html',{'this_movie':this_movie,'wtypes':wtypes,'relw':related_wikis,'director':director,'cast':cast})
 
 def watchmovie(request):
 	wmovie = Movie.objects.get(pk=int(request.POST.get("movieid")))
@@ -529,10 +532,18 @@ def savepost(request):
 	this_cat = WikiType.objects.get(pk=8)
 	datetime_object = datetime.strptime(fecha+' 00:00:00', '%Y-%m-%d %H:%M:%S')
 
-	newW = Wiki.objects.create(wtype=this_cat,title='No Title',info=entry,updated_at=datetime_object)
-	newW.save()
+	conteo = Wiki.objects.filter(wtype__id=8,updated_at=datetime_object).count()
 
-	return redirect('/')
+	if conteo == 0:
+		newW = Wiki.objects.create(wtype=this_cat,title='Journal Entry',info='<p>'+entry,updated_at=datetime_object)
+		newW.save()
+	else:
+		prev = Wiki.objects.filter(wtype__id=8,updated_at=datetime_object).latest('-id')
+
+		Wiki.objects.filter(id=prev.id).update(info = prev.info+'<p>'+entry)
+
+
+	return redirect('/journal/1')
 
 def journal(request,y):
 	max_year = Wiki.objects.filter(wtype__id=8).order_by('-updated_at').first()
@@ -549,7 +560,7 @@ def journal(request,y):
 def mediastats(request):
 
 	paginas = SeasonProgressLog.objects.raw("""
-			with todo as (select 
+			with todo as (select
 			    1 as id,
 			    'shows' type,
 			    strftime('%Y',date(a.fecha,'weekday 0')) as anho,
@@ -557,7 +568,7 @@ def mediastats(request):
 			    1*strftime('%d',date(a.fecha,'weekday 0')) as dia,
 			    round(sum(a.delta_lec*c.avg_runtime/60.0),1) as horas ,
 			    date(a.fecha,'weekday 0') fecha
-			from 
+			from
 			    times_seasonprogresslog a
 			    left join times_seasonprogressbar b
 			    on a.barra_id = b.id
@@ -569,11 +580,11 @@ def mediastats(request):
 			    strftime('%Y',date(a.fecha,'weekday 0')),
 			    1*strftime('%m',date(a.fecha,'weekday 0'))-1,
 			    1*strftime('%d',date(a.fecha,'weekday 0')),
-			    date(a.fecha,'weekday 0') 
+			    date(a.fecha,'weekday 0')
 
 			union all
 
-			select 
+			select
 			    1 as id,
 			    'movies' type,
 			    strftime('%Y',date(a.wdate,'weekday 0')) as anho,
@@ -581,7 +592,7 @@ def mediastats(request):
 			    1*strftime('%d',date(a.wdate,'weekday 0')) as dia,
 			    round(sum(b.runtime/60.0),1) as horas ,
 			    date(a.wdate,'weekday 0') fecha
-			from 
+			from
 			    times_moviewatch a
 			    left join times_movie b
 			    on a.film_id = b.id
@@ -593,14 +604,14 @@ def mediastats(request):
 			    1*strftime('%d',date(a.wdate,'weekday 0')),
 			    date(a.wdate,'weekday 0') )
 
-			select 
+			select
 				1 as id,
 			    anho,
 			    mes,
 			    dia,
 			    fecha,
 			    sum(horas) as horas
-			from 
+			from
 			    todo
 			group by
 			    anho,
@@ -616,3 +627,27 @@ def mediastats(request):
 
 
 	return render(request, 'media-stats.html', { "data_points" : data_points })
+
+def addmoviecredits(request):
+	director = request.POST.get("director")
+	cast = request.POST.get("cast")
+	movie = Movie.objects.get(pk=int(request.POST.get("movie_id")))
+
+	for strC in request.POST.get("director","").split(","):
+		newMC = MovieCredit.objects.create(film=movie,credit='Director',persona=strC.strip())
+		newMC.save()
+
+	for strC in request.POST.get("cast","").split(","):
+		newMC = MovieCredit.objects.create(film=movie,credit='Main Cast',persona=strC.strip())
+		newMC.save()
+
+	return redirect('/movie/{}'.format(movie.id))
+
+def movieperson(request,strPersona):
+	creditos = MovieCredit.objects.filter(persona=strPersona).order_by('-film__premiere')
+	personas = MovieCredit.objects.values('persona').annotate(ncredits = Count('id')).order_by('-ncredits','persona')
+	this_persona = strPersona
+
+	return render(request,'movie-person.html',{'creditos':creditos,'personas':personas,'this_persona':this_persona})
+	
+

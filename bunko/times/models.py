@@ -52,6 +52,10 @@ class Wiki(models.Model):
 		else:
 			return self.info.replace('==headtext==','')
 
+	@property
+	def fecha_c(self):
+		return self.updated_at.strftime("%Y-%m-%d")
+
 
 class Book(models.Model):
 	title = models.CharField(max_length=512)
@@ -412,6 +416,12 @@ class ItemMedia(models.Model):
 	def __str__(self):
 		return self.item.title
 
+class MovieCredit(models.Model):
+	film = models.ForeignKey(Movie,on_delete=models.CASCADE)
+	credit = models.CharField(max_length=200)
+	persona = models.CharField(max_length=200)
+	def __str__(self):
+		return self.persona+' @ '+ self.film.titulo
 
 
 

@@ -23,6 +23,14 @@
 
 	{{this_movie.cleantext|linebreaks}}
 
+	{% if director %}
+	<p>Director:<br> {% for d in director %}<a href="{% url 'movieperson' d.persona %}"><span class="badge text-bg-success">{{d.persona}}</span></a>&nbsp;{% endfor %}
+	{% endif %}
+
+	{% if cast %}
+	<p>Cast:<br> {% for d in cast %}<a href="{% url 'movieperson' d.persona %}"><span class="badge text-bg-secondary">{{d.persona}}</span></a>&nbsp;{% endfor %}
+	{% endif %}
+
 		{% if relw %}
 			<h5>Related Wikis</h5>
 			<div class="row" data-masonry='{"percentPosition": true }'>
@@ -39,6 +47,7 @@
 			{% endfor %}
 			</div>
 			{%endif%}
+	
 </article>
   </div>
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -63,31 +72,20 @@
 	  <input type="hidden" value = "{{this_movie.id}}" name="movieid">
 	</form>
 <br>
-	<h4>Add Related Wiki</h4>
+	<h4>Add Credits</h4>
 
-	<form method="POST" action="{% url 'addnewrelwiki' %}">
+	<form method="POST" action="{% url 'addmoviecredits' %}">
 	  {% csrf_token %}
 	  <div class="form-group">	
-	    <label for="exampleFormControlInput1">Title</label>
-	    <input type = "text" name="title" class="form-control" id="exampleFormControlInput1">
+	    <label for="exampleFormControlInput1">Director</label>
+	    <input type = "text" name="director" class="form-control" id="exampleFormControlInput1">
 	  </div>
 	  <br>
 	  <div class="form-group">
-	    <label for="exampleFormControlSelect1">Category</label>
-	    <select class="form-control" name="cat_id" id="exampleFormControlSelect1">
-	    	{% for w in wtypes %}
-	      		<option value = "{{w.id}}">{{w.category}}</option>
-	    	{% endfor %}
-	    </select>
+	    <label for="exampleFormControlTextarea1">Cast</label>
+	    <textarea name = "cast" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
 	  </div>
-	  <br>
-	  <div class="form-group">
-	    <label for="exampleFormControlTextarea1">Content</label>
-	    <textarea name = "info" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-	  </div>
-	  <br>
-	  <input type="hidden" name="media_type" value="2">
-	  <input type="hidden" name="media_id" value="{{this_movie.id}}">
+	  <input type="hidden" name="movie_id" value="{{this_movie.id}}">
 	  <button type="submit" class="btn btn-primary">Add Entry</button>
 	</form>
 
