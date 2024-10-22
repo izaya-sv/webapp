@@ -94,7 +94,7 @@ class Book(models.Model):
 		enlaces = ""
 
 		for c in creds:
-			enlaces = enlaces + "<a href='/wiki/"+str(c.persona.id)+"' style='text-decoration:none;'>"+c.persona.title+"</a>,&nbsp;"
+			enlaces = enlaces + "<a href='/wiki/"+str(c.persona.id)+"' style='text-decoration:none; color:#6F8FAF;'>"+c.persona.title+"</a>,&nbsp;"
 
 		return enlaces[:-7]
 
@@ -422,6 +422,27 @@ class MovieCredit(models.Model):
 	persona = models.CharField(max_length=200)
 	def __str__(self):
 		return self.persona+' @ '+ self.film.titulo
+
+class BookDuel(models.Model):
+	left_b = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='left_b')
+	right_b = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='right_b')
+	win_b = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='win_b')
+
+	def __str__(self):
+		return self.left_b.titulo+' @ '+ self.right_b.titulo
+
+
+class MovieDuel(models.Model):
+	left_b = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='left_b')
+	right_b = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='right_b')
+	win_b = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='win_b')
+
+	def __str__(self):
+		return self.left_b.titulo+' @ '+ self.right_b.titulo
+
+
+
+
 
 
 

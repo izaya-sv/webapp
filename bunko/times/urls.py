@@ -50,6 +50,10 @@ urlpatterns = [
 	path('mediastats', views.mediastats, name='mediastats'),
 	path('addmoviecredits', views.addmoviecredits, name='addmoviecredits'),
 	path('movieperson/<strPersona>', views.movieperson, name='movieperson'),
+	path('bookduel/', views.bookduel, name='bookduel'),
+	path('savebookduel/<l>/<r>/<w>', views.savebookduel, name='savebookduel'),
+	path('movieduel/', views.movieduel, name='movieduel'),
+	path('savemovieduel/<l>/<r>/<w>', views.savemovieduel, name='savemovieduel'),
 
 
 	]

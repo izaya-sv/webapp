@@ -18,7 +18,7 @@
                 <div class="card-body">
 
                   <h5 class="card-title"><a href='{% url "book" a.volume.id  %}' style="text-decoration: none;">{{a.volume.titulo}}</a>
-                    <br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{a.finish_d}} | {{a.volume.authors_links|safe}}</small></h5>
+                    <br><small class="text-muted" style="font-size: 0.7em;  font-weight: normal;">{{a.finish_d}} | {{a.volume.authors_links|safe}}</small></h5>
 
                   <p class="card-text">{{a.volume.headtext}}</p>
 

@@ -645,9 +645,177 @@ def addmoviecredits(request):
 
 def movieperson(request,strPersona):
 	creditos = MovieCredit.objects.filter(persona=strPersona).order_by('-film__premiere')
-	personas = MovieCredit.objects.values('persona').annotate(ncredits = Count('id')).order_by('-ncredits','persona')
+	personas = MovieCredit.objects.values('persona').annotate(ncredits = Count('id')).order_by('-ncredits','persona')[0:30]
 	this_persona = strPersona
 
 	return render(request,'movie-person.html',{'creditos':creditos,'personas':personas,'this_persona':this_persona})
+
+def bookduel(request):
+	pks = Consumo.objects.filter(volume__wtype__id=9).values_list('volume__id', flat=True)
+	random_pk = choice(pks)
+	random_obj = Book.objects.get(pk=random_pk)
+
+	pks = Consumo.objects.filter(volume__wtype__id=9).exclude(volume__id=random_pk).values_list('volume__id', flat=True)
+	random_pk = choice(pks)
+	random_obj2 = Book.objects.get(pk=random_pk)
+
+	conteo_1 = BookDuel.objects.filter(left_b__id=int(random_obj.id),right_b__id=int(random_obj2.id)).count()
+	conteo_2 = BookDuel.objects.filter(left_b__id=int(random_obj2.id),right_b__id=int(random_obj.id)).count()
+	conteo_t = conteo_1 + conteo_2
+
+	topbooks = BookDuel.objects.raw("""
+		select
+		    1 as id,
+		    conteos.*,
+		    datos.title,
+		    datos.pub_year,
+		    case 
+		    	when conteos.duels <= 5 then 0 
+		    	when conteos.duels <= 10 then 1 
+		    	when conteos.duels <= 25 then 2 
+		    	else 3
+		    end flag_votes,
+		    	
+		    round(100.000*conteos.wins/conteos.duels,1) as rank_p
+		from
+		    (select
+		        book_id,
+		        sum(c) as duels,
+		        sum(wins) as wins
+		    from
+		        (select 
+		            left_b_id as book_id,
+		            count(1) c,
+		            sum(case when win_b_id=left_b_id then 1 else 0 end) wins
+		        from 
+		            times_bookduel
+		        group by
+		            left_b_id
+		        
+		        union all
+		        
+		        select 
+		            right_b_id book_id,
+		            count(1) c,
+		            sum(case when win_b_id=right_b_id then 1 else 0 end) wins
+		        from 
+		            times_bookduel
+		        group by
+		            right_b_id ) as x
+		    group by
+		        book_id) conteos
+		    left join times_book datos
+		    on conteos.book_id = datos.id
+		order by
+			case 
+		    	when conteos.duels <= 5 then 0 
+		    	when conteos.duels <= 10 then 1 
+		    	when conteos.duels <= 25 then 2 
+		    	else 3
+		    end desc,
+		    100.000*conteos.wins/conteos.duels desc,  conteos.duels desc """)
+
+	return render(request,'book_duel.html',{'book1':random_obj,'book2':random_obj2,'topbooks':topbooks, 'conteo_t':conteo_t})
+
+
+def savebookduel(request,l,r,w):
 	
+	conteo_1 = BookDuel.objects.filter(left_b__id=int(l),right_b__id=int(r)).count()
+	conteo_2 = BookDuel.objects.filter(left_b__id=int(r),right_b__id=int(l)).count()
+
+	conteo_t = conteo_2 + conteo_1
+
+	if conteo_t == 0:
+		book1 = Book.objects.get(pk=int(l))
+		book2 = Book.objects.get(pk=int(r))
+		book3 = Book.objects.get(pk=int(w))
+		newBD = BookDuel.objects.create(left_b=book1,right_b=book2,win_b=book3)
+
+	return redirect('/bookduel')
+
+
+def movieduel(request):
+	pks = MovieWatch.objects.all().values_list('film__id', flat=True)
+	random_pk = choice(pks)
+	random_obj = Movie.objects.get(pk=random_pk)
+
+	pks = MovieWatch.objects.all().exclude(film__id=random_pk).values_list('film__id', flat=True)
+	random_pk = choice(pks)
+	random_obj2 = Movie.objects.get(pk=random_pk)
+
+	conteo_1 = MovieDuel.objects.filter(left_b__id=int(random_obj.id),right_b__id=int(random_obj2.id)).count()
+	conteo_2 = MovieDuel.objects.filter(left_b__id=int(random_obj2.id),right_b__id=int(random_obj.id)).count()
+	conteo_t = conteo_1 + conteo_2
+
+	topbooks = MovieDuel.objects.raw("""
+		select
+		    1 as id,
+		    conteos.*,
+		    datos.title,
+		    datos.premiere,
+		    case 
+		    	when conteos.duels <= 5 then 0 
+		    	when conteos.duels <= 10 then 1 
+		    	when conteos.duels <= 25 then 2 
+		    	else 3
+		    end flag_votes,
+		    round(conteos.wins*100.00/conteos.duels,1) rank_p
+		from
+		    (select
+		        book_id,
+		        sum(c) as duels,
+		        sum(wins) as wins
+		    from
+		        (select 
+		            left_b_id as book_id,
+		            count(1) c,
+		            sum(case when win_b_id=left_b_id then 1 else 0 end) wins
+		        from 
+		            times_movieduel
+		        group by
+		            left_b_id
+		        
+		        union all
+		        
+		        select 
+		            right_b_id book_id,
+		            count(1) c,
+		            sum(case when win_b_id=right_b_id then 1 else 0 end) wins
+		        from 
+		            times_movieduel
+		        group by
+		            right_b_id ) as x
+		    group by
+		        book_id) conteos
+		    left join times_movie datos
+		    on conteos.book_id = datos.id
+		order by
+			case 
+		    	when conteos.duels <= 5 then 0 
+		    	when conteos.duels <= 10 then 1 
+		    	when conteos.duels <= 25 then 2 
+		    	else 3
+		    end desc,
+		    conteos.wins*1.00/conteos.duels desc,  conteos.duels desc """)
+
+
+
+	return render(request,'movie_duel.html',{'book1':random_obj,'book2':random_obj2,'topbooks':topbooks,'conteo_t':conteo_t})
+
+
+def savemovieduel(request,l,r,w):
+	
+	conteo_1 = MovieDuel.objects.filter(left_b__id=int(l),right_b__id=int(r)).count()
+	conteo_2 = MovieDuel.objects.filter(left_b__id=int(r),right_b__id=int(l)).count()
+
+	conteo_t = conteo_2 + conteo_1
+
+	if conteo_t == 0:
+		book1 = Movie.objects.get(pk=int(l))
+		book2 = Movie.objects.get(pk=int(r))
+		book3 = Movie.objects.get(pk=int(w))
+		newBD = MovieDuel.objects.create(left_b=book1,right_b=book2,win_b=book3)
+
+	return redirect('/movieduel')
+
 
