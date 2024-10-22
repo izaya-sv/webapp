@@ -9,6 +9,7 @@ from django.db.models.functions import Round
 from django.db.models.functions import Cast
 from datetime import datetime
 import math
+import random
 
 
 def plantilla(request):
@@ -651,17 +652,55 @@ def movieperson(request,strPersona):
 	return render(request,'movie-person.html',{'creditos':creditos,'personas':personas,'this_persona':this_persona})
 
 def bookduel(request):
-	pks = Consumo.objects.filter(volume__wtype__id=9).values_list('volume__id', flat=True)
-	random_pk = choice(pks)
-	random_obj = Book.objects.get(pk=random_pk)
 
-	pks = Consumo.objects.filter(volume__wtype__id=9).exclude(volume__id=random_pk).values_list('volume__id', flat=True)
-	random_pk = choice(pks)
-	random_obj2 = Book.objects.get(pk=random_pk)
 
-	conteo_1 = BookDuel.objects.filter(left_b__id=int(random_obj.id),right_b__id=int(random_obj2.id)).count()
-	conteo_2 = BookDuel.objects.filter(left_b__id=int(random_obj2.id),right_b__id=int(random_obj.id)).count()
-	conteo_t = conteo_1 + conteo_2
+	n_duelos  = BookDuel.objects.raw("""
+	select 
+		1 as id,
+	    count(1) as conteo
+	 from 
+	    posibles_duelos a
+	    left join times_bookduel b
+	    on a.volume_izq = b.left_b_id and a.volume_der = b.right_b_id
+	    left join times_bookduel c
+	    on a.volume_izq = c.right_b_id and a.volume_der = c.left_b_id
+	where
+	    b.id is null and c.id is null""")
+
+	for n in n_duelos:
+		n_d = n.conteo
+
+	if n_d > 0:
+		elegido = random.randint(0, (n_d)-1)
+
+		duelos = BookDuel.objects.raw("""
+		select 
+		    a.id,
+		    a.volume_der,
+		    a.volume_izq
+		from 
+		    posibles_duelos a
+		    left join times_bookduel b
+		    on a.volume_izq = b.left_b_id and a.volume_der = b.right_b_id
+		    left join times_bookduel c
+		    on a.volume_izq = c.right_b_id and a.volume_der = c.left_b_id
+		where
+		    b.id is null and c.id is null""")[elegido]
+
+
+		
+		random_obj = Book.objects.get(pk=duelos.volume_izq)
+		random_obj2 = Book.objects.get(pk=duelos.volume_der)
+
+
+		conteo_1 = BookDuel.objects.filter(left_b__id=int(random_obj.id),right_b__id=int(random_obj2.id)).count()
+		conteo_2 = BookDuel.objects.filter(left_b__id=int(random_obj2.id),right_b__id=int(random_obj.id)).count()
+		conteo_t = conteo_1 + conteo_2
+	else:
+		elegido = 0
+		random_obj = None
+		random_obj2 = None
+		conteo_t = None
 
 	topbooks = BookDuel.objects.raw("""
 		select
@@ -715,7 +754,7 @@ def bookduel(request):
 		    end desc,
 		    100.000*conteos.wins/conteos.duels desc,  conteos.duels desc """)
 
-	return render(request,'book_duel.html',{'book1':random_obj,'book2':random_obj2,'topbooks':topbooks, 'conteo_t':conteo_t})
+	return render(request,'book_duel.html',{'book1':random_obj,'book2':random_obj2,'topbooks':topbooks, 'conteo_t':conteo_t,'n_duelos':n_d})
 
 
 def savebookduel(request,l,r,w):
@@ -735,17 +774,53 @@ def savebookduel(request,l,r,w):
 
 
 def movieduel(request):
-	pks = MovieWatch.objects.all().values_list('film__id', flat=True)
-	random_pk = choice(pks)
-	random_obj = Movie.objects.get(pk=random_pk)
 
-	pks = MovieWatch.objects.all().exclude(film__id=random_pk).values_list('film__id', flat=True)
-	random_pk = choice(pks)
-	random_obj2 = Movie.objects.get(pk=random_pk)
+	n_duelos  = MovieDuel.objects.raw("""
+	select 
+	    1 as id,
+	    count(1) as conteo
+	from 
+	    movie_duelosp a
+	    left join times_movieduel b
+	    on a.volume_izq = b.left_b_id and a.volume_der = b.right_b_id
+	    left join times_movieduel c
+	    on a.volume_izq = c.right_b_id and a.volume_der = c.left_b_id
+	where
+	    b.id is null and c.id is null""")
 
-	conteo_1 = MovieDuel.objects.filter(left_b__id=int(random_obj.id),right_b__id=int(random_obj2.id)).count()
-	conteo_2 = MovieDuel.objects.filter(left_b__id=int(random_obj2.id),right_b__id=int(random_obj.id)).count()
-	conteo_t = conteo_1 + conteo_2
+	for n in n_duelos:
+		n_d = n.conteo
+
+
+	if n_d > 0:
+		elegido = random.randint(0, (n_d)-1)
+		duelos = MovieDuel.objects.raw("""
+		select
+		    a.id,
+		    a.volume_der,
+		    a.volume_izq
+		from 
+		    movie_duelosp a
+		    left join times_movieduel b
+		    on a.volume_izq = b.left_b_id and a.volume_der = b.right_b_id
+		    left join times_movieduel c
+		    on a.volume_izq = c.right_b_id and a.volume_der = c.left_b_id
+		where
+		    b.id is null and c.id is null""")[elegido]
+		
+		random_obj = Movie.objects.get(pk=duelos.volume_izq)
+		random_obj2 = Movie.objects.get(pk=duelos.volume_der)
+		conteo_1 = MovieDuel.objects.filter(left_b__id=int(random_obj.id),right_b__id=int(random_obj2.id)).count()
+		conteo_2 = MovieDuel.objects.filter(left_b__id=int(random_obj2.id),right_b__id=int(random_obj.id)).count()
+		conteo_t = conteo_1 + conteo_2
+	else:
+		elegido = 0
+		random_obj = None
+		random_obj2 = None
+		conteo_t = None
+		
+
+	
 
 	topbooks = MovieDuel.objects.raw("""
 		select

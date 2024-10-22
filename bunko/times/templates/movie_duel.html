@@ -8,7 +8,9 @@
 
 {% block contenido %}
   <article>
+    {% if book1 and book2 %}
     <h4>{% if conteo_t > 0 %}Matched{%else%}<span style="color:green;">New!</span>{% endif %} Movie Duel</h4>
+    
 
   <a href="{% url 'savemovieduel' book1.id book2.id book1.id %}">
   <div class='ppic' style='background-image:url("{{book1.mainPic}}");'>
@@ -41,7 +43,8 @@
   </a>
   <div style="clear:both;"></div>
  <hr>
-  <h4>Top Books</h4>
+ {% endif %}
+  <h4>Top Movies</h4>
 
 
    <ul class="list-group">

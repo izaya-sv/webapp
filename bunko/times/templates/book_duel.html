@@ -8,8 +8,10 @@
 
 {% block contenido %}
   <article>
+    
     <h4>{% if conteo_t > 0 %}Matched{%else%}<span style="color:green;">New!</span>{% endif %} Book Duel </h4>
-
+    
+    {% if book1 and book2 %}
   <a href="{% url 'savebookduel' book1.id book2.id book1.id %}">
   <div class='ppic' style='background-image:url("{{book1.mainPic}}");'>
     <div style='background-color: rgba(77, 129, 221, 0.76);  position: absolute;
@@ -40,7 +42,9 @@
   </div>
   </a>
   <div style="clear:both;"></div>
+
  <hr>
+ {% endif %}
   <h4>Top Books</h4>
 
 
