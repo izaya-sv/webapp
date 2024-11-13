@@ -18,8 +18,11 @@
   	<br>
   	<article class="blog-post">
 		<h4>{{this_wiki.title}} <br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{this_wiki.wtype.category|capfirst}} | {{this_wiki.updated_at|date:"M d, Y"}}</small></h4>
-
+        {% if creditos %}
+		{{this_wiki.headtext|safe|linebreaks}}
+		{% else %}
 		{{this_wiki.cleantext|safe|linebreaks}}
+		{% endif %}
 
 
 		{% if creditos %}

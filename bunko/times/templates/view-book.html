@@ -51,6 +51,7 @@
 		{%endfor%}
 	{%endif%}
 	  {% if this_book.mainPic %}<img src="{{this_book.mainPic}}" style="border:1px solid grey; float:left; width:40%; margin-right: 16px; margin-bottom: 16px;">{% endif %}
+	{% if this_book.rhist == 0 %}<p></p><a href="{% url 'quemarlibro' this_book.id %}">Quemar</a></p>{% endif %}
 	{{this_book.cleantext|linebreaks}}
 
 
@@ -63,7 +64,7 @@
 			        <div class="card-body">
 			          <h5 class="card-title"><a href='{% url "wiki" a.mwiki.id  %}' style="text-decoration: none;">{{a.mwiki.title}}</a>
 			          	<br><small class="text-muted" style="font-size: 0.7em; font-weight: normal;">{{a.mwiki.wtype.category|capfirst}} | {{a.mwiki.updated_at|date:"M d, Y"}}</small></h5>
-			          <p class="card-text">{{a.mwiki.headtext}}</p>
+			          <p class="card-text"><br>{{a.mwiki.headtext}}</p>
 			        </div>
 			      </div>
 			       </div>
@@ -84,14 +85,15 @@
 	    <input type = "text" value="{% now 'Y-m-d' %}" name="start_date" class="form-control" id="exampleFormControlInput1">
 	  </div>
 	  <div class="form-group col-sm-4">
-	    <label for="exampleFormControlSelect1">Units</label>
+	    <label for="exampleFormControlSelect1">Format</label>
 	    <select class="form-control" name="units" id="exampleFormControlSelect1">
-	      		<option value = "pages">Pages</option>
-	      		<option value = "chapters">Chapaters</option>
+	      		<option value = "Printed">Printed</option>
+	      		<option value = "Kindle">Kindle</option>
+	      		<option value = "Audio">AudioBook</option>
 	    </select>
 	  </div>
 	  <div class="form-group col-sm-4">
-	    <label for="exampleFormControlInput1">Cantidad:</label>
+	    <label for="exampleFormControlInput1">Pages:</label>
 	    <input type = "text" name="cantidad" class="form-control" id="exampleFormControlInput1">
 	  </div>
 

@@ -54,6 +54,11 @@ urlpatterns = [
 	path('savebookduel/<l>/<r>/<w>', views.savebookduel, name='savebookduel'),
 	path('movieduel/', views.movieduel, name='movieduel'),
 	path('savemovieduel/<l>/<r>/<w>', views.savemovieduel, name='savemovieduel'),
+	path('quemarlibro/<libro>', views.quemarlibro, name='quemarlibro'),
+	path('getmovie/', views.moviedbImport, name='moviedbImport'),
+	path('savemovie/', views.savemovie, name='savemovie'),
+
+	
 
 
 	]

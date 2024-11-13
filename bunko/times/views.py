@@ -398,10 +398,17 @@ def booklist(request,lid):
 	return render(request,'lista.html',{'this_lista':this_lista,'this_books':this_books})
 
 def addprogressbar(request):
+	import datetime
 	this_book = Book.objects.get(pk=int(request.POST.get("book_id")))
 	units = request.POST.get("units")
 	cant = request.POST.get("cantidad")
 	start_d = request.POST.get("start_date")
+
+	conteo = Consumo.objects.filter(volume=this_book,start_d=datetime.datetime(1999, 12, 31)).count()
+
+
+	if conteo > 0:
+		Consumo.objects.filter(volume=this_book,start_d=datetime.datetime(1999, 12, 31)).delete()
 
 	newPB = ProgressBar.objects.create(libro = this_book,units=units,cantidad=cant,fecha_inicio = start_d)
 	newPB.save()
@@ -655,10 +662,10 @@ def bookduel(request):
 
 
 	n_duelos  = BookDuel.objects.raw("""
-	select 
+	select
 		1 as id,
 	    count(1) as conteo
-	 from 
+	 from
 	    posibles_duelos a
 	    left join times_bookduel b
 	    on a.volume_izq = b.left_b_id and a.volume_der = b.right_b_id
@@ -674,11 +681,11 @@ def bookduel(request):
 		elegido = random.randint(0, (n_d)-1)
 
 		duelos = BookDuel.objects.raw("""
-		select 
+		select
 		    a.id,
 		    a.volume_der,
 		    a.volume_izq
-		from 
+		from
 		    posibles_duelos a
 		    left join times_bookduel b
 		    on a.volume_izq = b.left_b_id and a.volume_der = b.right_b_id
@@ -688,7 +695,7 @@ def bookduel(request):
 		    b.id is null and c.id is null""")[elegido]
 
 
-		
+
 		random_obj = Book.objects.get(pk=duelos.volume_izq)
 		random_obj2 = Book.objects.get(pk=duelos.volume_der)
 
@@ -708,13 +715,13 @@ def bookduel(request):
 		    conteos.*,
 		    datos.title,
 		    datos.pub_year,
-		    case 
-		    	when conteos.duels <= 5 then 0 
-		    	when conteos.duels <= 10 then 1 
-		    	when conteos.duels <= 25 then 2 
+		    case
+		    	when conteos.duels <= 5 then 0
+		    	when conteos.duels <= 10 then 1
+		    	when conteos.duels <= 25 then 2
 		    	else 3
 		    end flag_votes,
-		    	
+
 		    round(100.000*conteos.wins/conteos.duels,1) as rank_p
 		from
 		    (select
@@ -722,22 +729,22 @@ def bookduel(request):
 		        sum(c) as duels,
 		        sum(wins) as wins
 		    from
-		        (select 
+		        (select
 		            left_b_id as book_id,
 		            count(1) c,
 		            sum(case when win_b_id=left_b_id then 1 else 0 end) wins
-		        from 
+		        from
 		            times_bookduel
 		        group by
 		            left_b_id
-		        
+
 		        union all
-		        
-		        select 
+
+		        select
 		            right_b_id book_id,
 		            count(1) c,
 		            sum(case when win_b_id=right_b_id then 1 else 0 end) wins
-		        from 
+		        from
 		            times_bookduel
 		        group by
 		            right_b_id ) as x
@@ -746,10 +753,10 @@ def bookduel(request):
 		    left join times_book datos
 		    on conteos.book_id = datos.id
 		order by
-			case 
-		    	when conteos.duels <= 5 then 0 
-		    	when conteos.duels <= 10 then 1 
-		    	when conteos.duels <= 25 then 2 
+			case
+		    	when conteos.duels <= 5 then 0
+		    	when conteos.duels <= 10 then 1
+		    	when conteos.duels <= 25 then 2
 		    	else 3
 		    end desc,
 		    100.000*conteos.wins/conteos.duels desc,  conteos.duels desc """)
@@ -758,7 +765,7 @@ def bookduel(request):
 
 
 def savebookduel(request,l,r,w):
-	
+
 	conteo_1 = BookDuel.objects.filter(left_b__id=int(l),right_b__id=int(r)).count()
 	conteo_2 = BookDuel.objects.filter(left_b__id=int(r),right_b__id=int(l)).count()
 
@@ -776,10 +783,10 @@ def savebookduel(request,l,r,w):
 def movieduel(request):
 
 	n_duelos  = MovieDuel.objects.raw("""
-	select 
+	select
 	    1 as id,
 	    count(1) as conteo
-	from 
+	from
 	    movie_duelosp a
 	    left join times_movieduel b
 	    on a.volume_izq = b.left_b_id and a.volume_der = b.right_b_id
@@ -799,7 +806,7 @@ def movieduel(request):
 		    a.id,
 		    a.volume_der,
 		    a.volume_izq
-		from 
+		from
 		    movie_duelosp a
 		    left join times_movieduel b
 		    on a.volume_izq = b.left_b_id and a.volume_der = b.right_b_id
@@ -807,7 +814,7 @@ def movieduel(request):
 		    on a.volume_izq = c.right_b_id and a.volume_der = c.left_b_id
 		where
 		    b.id is null and c.id is null""")[elegido]
-		
+
 		random_obj = Movie.objects.get(pk=duelos.volume_izq)
 		random_obj2 = Movie.objects.get(pk=duelos.volume_der)
 		conteo_1 = MovieDuel.objects.filter(left_b__id=int(random_obj.id),right_b__id=int(random_obj2.id)).count()
@@ -818,9 +825,9 @@ def movieduel(request):
 		random_obj = None
 		random_obj2 = None
 		conteo_t = None
-		
 
-	
+
+
 
 	topbooks = MovieDuel.objects.raw("""
 		select
@@ -828,10 +835,10 @@ def movieduel(request):
 		    conteos.*,
 		    datos.title,
 		    datos.premiere,
-		    case 
-		    	when conteos.duels <= 5 then 0 
-		    	when conteos.duels <= 10 then 1 
-		    	when conteos.duels <= 25 then 2 
+		    case
+		    	when conteos.duels <= 5 then 0
+		    	when conteos.duels <= 10 then 1
+		    	when conteos.duels <= 25 then 2
 		    	else 3
 		    end flag_votes,
 		    round(conteos.wins*100.00/conteos.duels,1) rank_p
@@ -841,22 +848,22 @@ def movieduel(request):
 		        sum(c) as duels,
 		        sum(wins) as wins
 		    from
-		        (select 
+		        (select
 		            left_b_id as book_id,
 		            count(1) c,
 		            sum(case when win_b_id=left_b_id then 1 else 0 end) wins
-		        from 
+		        from
 		            times_movieduel
 		        group by
 		            left_b_id
-		        
+
 		        union all
-		        
-		        select 
+
+		        select
 		            right_b_id book_id,
 		            count(1) c,
 		            sum(case when win_b_id=right_b_id then 1 else 0 end) wins
-		        from 
+		        from
 		            times_movieduel
 		        group by
 		            right_b_id ) as x
@@ -865,10 +872,10 @@ def movieduel(request):
 		    left join times_movie datos
 		    on conteos.book_id = datos.id
 		order by
-			case 
-		    	when conteos.duels <= 5 then 0 
-		    	when conteos.duels <= 10 then 1 
-		    	when conteos.duels <= 25 then 2 
+			case
+		    	when conteos.duels <= 5 then 0
+		    	when conteos.duels <= 10 then 1
+		    	when conteos.duels <= 25 then 2
 		    	else 3
 		    end desc,
 		    conteos.wins*1.00/conteos.duels desc,  conteos.duels desc """)
@@ -879,7 +886,7 @@ def movieduel(request):
 
 
 def savemovieduel(request,l,r,w):
-	
+
 	conteo_1 = MovieDuel.objects.filter(left_b__id=int(l),right_b__id=int(r)).count()
 	conteo_2 = MovieDuel.objects.filter(left_b__id=int(r),right_b__id=int(l)).count()
 
@@ -893,4 +900,88 @@ def savemovieduel(request,l,r,w):
 
 	return redirect('/movieduel')
 
+def quemarlibro(request,libro):
 
+	libro = Book.objects.get(pk=int(libro))
+	conteo_2 = Consumo.objects.create(volume = libro, pages=1,start_d='1999-12-31',finish_d='1999-12-31')
+	conteo_2.save()
+
+
+
+	return redirect('/book/{}'.format(libro.id))
+
+
+def moviedbImport(request):
+    import requests
+    import json
+
+    movie_id = request.POST.get("title")
+
+    url = "https://api.themoviedb.org/3/movie/{}?language=en-US".format(movie_id)
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NmM4MjVlMDFiY2RiMWQ1NWQ4YjRmYzNiNDQ0ODFhZiIsInN1YiI6IjYwMWM1NmFkNzMxNGExMDAzZGZjMzhiOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.vnpzsejhhlKDqssAg1dHiMH64Ja4_bP2UPcJFgHrW3k"
+    }
+
+    response = requests.get(url, headers=headers)
+    movie_dict = json.loads(response.text)
+    movie_dict3 = json.loads(response.text)
+
+    str_titulo = movie_dict['original_title']
+    str_overview = movie_dict['overview']
+    str_premiere = movie_dict['release_date']
+    str_runtime= movie_dict['runtime']
+    str_poster = "https://image.tmdb.org/t/p/w200{}".format(movie_dict['poster_path'])
+
+    url = "https://api.themoviedb.org/3/movie/{}/credits?language=en-US".format(movie_id)
+
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NmM4MjVlMDFiY2RiMWQ1NWQ4YjRmYzNiNDQ0ODFhZiIsInN1YiI6IjYwMWM1NmFkNzMxNGExMDAzZGZjMzhiOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.vnpzsejhhlKDqssAg1dHiMH64Ja4_bP2UPcJFgHrW3k"
+    }
+
+    response = requests.get(url, headers=headers)
+    movie_dict = json.loads(response.text)
+
+    int_c = 0
+    str_director = ""
+    for c in movie_dict['crew']:
+        if c['job']=='Director':
+            str_director = str_director+c['original_name']+","
+
+    str_director = str_director[:-1]
+
+    str_cast = ""
+    for c in movie_dict['cast'][0:12]:
+        str_cast = str_cast+c['original_name']+","
+
+    str_cast = str_cast[:-1]
+
+    str_tags = str_director+","+str_premiere[0:4]+","+str_cast
+
+    return render(request,'add-moviedb.html',{'str_tags':str_tags,'str_titulo':str_titulo,'str_overview':str_overview,'str_premiere':str_premiere[0:4],'str_runtime':str_runtime,'str_poster':str_poster,'str_director':str_director,'str_cast':str_cast})
+
+def savemovie(request):
+	mtitle = request.POST.get("title")
+	mpremiere = request.POST.get("premiere")
+	mruntime = request.POST.get("runtime")
+	minfo = request.POST.get("info")
+
+	newM = Movie.objects.create(title=mtitle,premiere=mpremiere,runtime=mruntime,info=minfo)
+	newM.save()
+
+	director = request.POST.get("director")
+	cast = request.POST.get("cast")
+	movie = Movie.objects.get(pk=newM.id)
+
+	for strC in request.POST.get("director","").split(","):
+		newMC = MovieCredit.objects.create(film=movie,credit='Director',persona=strC.strip())
+		newMC.save()
+
+	for strC in request.POST.get("cast","").split(","):
+		newMC = MovieCredit.objects.create(film=movie,credit='Main Cast',persona=strC.strip())
+		newMC.save()
+
+
+
+	return redirect('/movie/{}'.format(newM.id))

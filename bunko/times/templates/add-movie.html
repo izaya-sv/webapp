@@ -4,6 +4,23 @@
 
 {% block contenido %}
 <article>
+
+	<h4>Add From TheMovieDB</h4>
+
+	<form method="POST" action="{% url 'moviedbImport' %}">
+	  {% csrf_token %}
+	   <div class="row">
+	  <div class="form-group col-sm-8">	
+	    <label for="exampleFormControlInput1">Title</label>
+	    <input type = "text" name="title" class="form-control" id="exampleFormControlInput1">
+	  </div><br>
+	  <div class="form-group col-sm-4">	
+	  	<label for="exampleFormControlInput1">&nbsp;</label><br>
+	  <button type="submit" class="btn btn-primary " style="width:100%">Search</button>
+	</div>
+	</div>
+	</form><br>
+
 	<h4>Add New Movie</h4>
 
 	<form method="POST">
