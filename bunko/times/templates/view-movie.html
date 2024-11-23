@@ -47,7 +47,7 @@
 			{% endfor %}
 			</div>
 			{%endif%}
-	
+
 </article>
   </div>
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -57,16 +57,16 @@
 	<form method="POST" action="{% url 'watchmovie' %}">
 	  {% csrf_token %}
 	  <div class="row">
-	  <div class="form-group col-sm-6">	
+	  <div class="form-group col-sm-6">
 	    <label for="exampleFormControlInput1">Watch Date</label>
-	    <input type = "text" name="start_d" class="form-control" id="exampleFormControlInput1">
+	    <input type = "text" name="start_d" class="form-control" value="{% now 'Y-m-d' %}" id="exampleFormControlInput1">
 	  </div>
-	  <div class="form-group col-sm-6">	
+	  <div class="form-group col-sm-6">
 	   <br>
 	    <button type="submit" class="btn btn-primary">Add Consumo</button>
-	   
+
 	  </div>
-	
+
 	</div>
 	  <br>
 	  <input type="hidden" value = "{{this_movie.id}}" name="movieid">
@@ -76,7 +76,7 @@
 
 	<form method="POST" action="{% url 'addmoviecredits' %}">
 	  {% csrf_token %}
-	  <div class="form-group">	
+	  <div class="form-group">
 	    <label for="exampleFormControlInput1">Director</label>
 	    <input type = "text" name="director" class="form-control" id="exampleFormControlInput1">
 	  </div>
@@ -94,7 +94,7 @@
 
 	<form method="POST" enctype="multipart/form-data" action="{% url 'addfilmmedia' %}">
 	  {% csrf_token %}
-	  
+
 	  <div class="form-group">
 	    <label for="exampleFormControlSelect1">Media Type</label>
 	    <select class="form-control" name="img_type" id="exampleFormControlSelect1">

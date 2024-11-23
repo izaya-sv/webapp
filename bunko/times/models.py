@@ -108,6 +108,16 @@ class Book(models.Model):
 		return rcheck
 
 	@property
+	def last_read(self):
+		conteo = Consumo.objects.filter(volume__id=self.id).count()
+		if conteo == 0:
+			rcheck = None
+		else:
+		    robject = Consumo.objects.filter(volume__id=self.id).latest('-finish_d')
+		    rcheck = robject.finish_d
+		return rcheck
+
+	@property
 	def mainPic(self):
 		npics = BookMedia.objects.filter(libro__id=self.id,imgtype=1).count()
 		if npics == 0:
@@ -334,7 +344,7 @@ class BookList(models.Model):
 
 	@property
 	def lecturas(self):
-		n_lecturas = RelBookList.objects.filter(blist=self, bbook__consumo__isnull=False).count()
+		n_lecturas = RelBookList.objects.filter(blist=self, bbook__consumo__finish_d__gt=self.date_created).count()
 		return n_lecturas
 
 

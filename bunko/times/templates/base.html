@@ -229,14 +229,7 @@
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="{% url 'statistics' %}">Stats</a>
             </li>
-
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="https://svdira.pythonanywhere.com/viewmatches/1/">Soccer</a>
-            </li>
-
-
-
-        </ul>
+         </ul>
         <form class="d-flex" role="search" action="{% url 'search' %}"  method="post">
           {% csrf_token %}
           <input class="form-control me-2" type="search" name="kw" placeholder="Search" aria-label="Search">
