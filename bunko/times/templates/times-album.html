@@ -1,0 +1,31 @@
+{% extends 'base_forms.html' %}
+
+{% block titulo %}Add Photo to Archive{% endblock %}
+
+{% block contenido %}
+<article>
+  {% for m in medias %}
+
+  <figure class="figure" style="text-align: center;">
+  {% if m.imagen.height > m.imagen.width %}
+  <img src="{{m.imagen.url}}" style="width: 50%; horizontal-alig" class="figure-img img-fluid rounded">
+  <figcaption class="figure-caption">{{m.title}} <br> &lt;img src='{{m.imagen.url}}' style='width:40%; margin-right:1em; border:1px solid grey; float:left;'&gt;
+  {% else %}
+  <img src="{{m.imagen.url}}" style="width: 100%;" class="figure-img img-fluid rounded">
+  <figcaption class="figure-caption">{{m.title}} <br> &lt;img src='{{m.imagen.url}}' style='width:100%; border:1px solid grey; float:left;'&gt;
+  {% endif %}
+  </figcaption>
+ </figure>
+ <hr>
+<div style="clear:both;"></div>
+{% endfor %}
+
+</article>
+
+<br>
+<br>
+
+
+
+
+{% endblock%}

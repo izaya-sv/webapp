@@ -225,6 +225,12 @@ class Show(models.Model):
 
 		return str_t
 
+	@property
+	def conteo_s(self):
+		n_seasons = Season.objects.filter(show__id = self.id).count()
+
+		return n_seasons
+
 
 class Season(models.Model):
 	show = models.ForeignKey(Show,on_delete=models.CASCADE)
@@ -449,6 +455,16 @@ class MovieDuel(models.Model):
 
 	def __str__(self):
 		return self.left_b.titulo+' @ '+ self.right_b.titulo
+
+
+class TimesMedia(models.Model):
+	title = models.CharField(max_length=512)
+	imgtype = models.IntegerField()
+	imagen = models.ImageField(upload_to=path_and_name, max_length=255, null=True, blank=True)
+
+	def __str__(self):
+		return self.title
+
 
 
 

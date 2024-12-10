@@ -985,3 +985,18 @@ def savemovie(request):
 
 
 	return redirect('/movie/{}'.format(newM.id))
+
+def addtimesmedia(request):
+	if request.method == 'POST':
+		info = request.POST.get("descripcion")
+		ix = request.FILES.get("imagen")
+		newM = TimesMedia.objects.create(title=info,imgtype=1,imagen=ix)
+		newM.save()
+		return redirect('/mediapage')
+	else:
+		return render(request,'add-times-media.html',{})
+
+def mediapage(request):
+	medias = TimesMedia.objects.all().order_by('-id')[0:10]
+
+	return render(request,'times-album.html',{'medias':medias})

@@ -57,6 +57,8 @@ urlpatterns = [
 	path('quemarlibro/<libro>', views.quemarlibro, name='quemarlibro'),
 	path('getmovie/', views.moviedbImport, name='moviedbImport'),
 	path('savemovie/', views.savemovie, name='savemovie'),
+	path('addtimesmedia/', views.addtimesmedia, name='addtimesmedia'),
+	path('mediapage/', views.mediapage, name='mediapage'),
 
 	
 

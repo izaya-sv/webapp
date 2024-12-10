@@ -194,6 +194,7 @@
                 <li><a class="dropdown-item" href="{% url 'addmovie' %}">Add Movie</a></li>
                 <li><a class="dropdown-item" href="{% url 'addshow' %}">Add Show</a></li>
                 <li><a class="dropdown-item" href="{% url 'addpersona' %}">Add Persona</a></li>
+                <li><a class="dropdown-item" href="{% url 'addtimesmedia' %}">Add Media</a></li>
               </ul>
             </li>
              <li class="nav-item dropdown">
@@ -228,6 +229,9 @@
 
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="{% url 'statistics' %}">Stats</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="{% url 'mediapage' %}">Media</a>
             </li>
          </ul>
         <form class="d-flex" role="search" action="{% url 'search' %}"  method="post">

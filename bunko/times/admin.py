@@ -22,9 +22,11 @@ admin.site.register(ProgressLog)
 admin.site.register(SeasonProgressBar)
 admin.site.register(SeasonProgressLog)
 admin.site.register(BookMedia)
+admin.site.register(MovieMedia)
 admin.site.register(MovieCredit)
 admin.site.register(BookDuel)
 admin.site.register(MovieDuel)
+admin.site.register(TimesMedia)
 
 
 
