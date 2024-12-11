@@ -461,9 +461,17 @@ class TimesMedia(models.Model):
 	title = models.CharField(max_length=512)
 	imgtype = models.IntegerField()
 	imagen = models.ImageField(upload_to=path_and_name, max_length=255, null=True, blank=True)
+	created_at = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
 		return self.title
+
+class BookTag(models.Model):
+	libro = models.ForeignKey(Book, on_delete=models.CASCADE)
+	tag = models.CharField(max_length=256)
+
+	def __str__(self):
+		return self.tag
 
 
 

@@ -54,6 +54,21 @@
 
 	{{this_book.cleantext|linebreaks}}
 
+	
+
+	{% if btags %}
+	<h5>Tags</h5>
+	<div style="position: relative;">
+
+		{% for t in btags %}
+		<a href="{% url 'viewbooktag' t.tag %}"><div style="float:left; margin:0.25em; border: 1px solid grey; padding:0.3em; border-radius: 3px;">
+		 	&nbsp;{{ t.tag }}&nbsp;
+		</div></a>
+		{% endfor %}
+
+	</div>
+	{% endif %}
+
 
 {% if relw %}
         <div style="clear:both;"></div>
@@ -104,29 +119,44 @@
 	  <button type="submit" class="btn btn-primary">Add Progress Bar</button>
 	</form>
   	<br>
-  	<h4>Add consumo</h4>
+  	<h4>Add Media</h4>
 
-	<form method="POST" action="{% url 'readbook' %}">
+	<form method="POST" enctype="multipart/form-data" action="{% url 'addbookmedia' %}">
 	  {% csrf_token %}
-	  <div class="row">
-	  <div class="form-group col-sm-4">
-	    <label for="exampleFormControlInput1">Start</label>
-	    <input type = "text" name="start_d" class="form-control" id="exampleFormControlInput1">
+
+	  <div class="form-group">
+	    <label for="exampleFormControlSelect1">Media Type</label>
+	    <select class="form-control" name="img_type" id="exampleFormControlSelect1">
+	      		<option value = "1">Cover</option>
+	      		<option value = "2">Portrait</option>
+	      		<option value = "3">Panorama</option>
+	    </select>
 	  </div>
-	  <div class="form-group col-sm-4">
-	    <label for="exampleFormControlInput1">Finish</label>
-	    <input type = "text" name="finish_d" class="form-control" id="exampleFormControlInput1">
-	  </div>
-	  <div class="form-group col-sm-4">
-	    <label for="exampleFormControlInput1">Pages</label>
-	    <input type = "text" name="pages" class="form-control" id="exampleFormControlInput1">
-	  </div>
-	</div>
 	  <br>
-	  <input type="hidden" value = "{{this_book.id}}" name="bookid">
-	  <button type="submit" class="btn btn-primary">Add Consumo</button>
+	  <div class="form-group">
+    	<label for="exampleFormControlFile1">File</label>
+    	<input type="file" name = "imagen" class="form-control-file" id="exampleFormControlFile1">
+  	</div>
+	  <br>
+	  <input type="hidden" name="media_type" value="1">
+	  <input type="hidden" name="media_id" value="{{this_book.id}}">
+	  <button type="submit" class="btn btn-primary">Add Entry</button>
 	</form>
 <br>
+ 	<h4>Add Tags</h4>
+
+	<form method="POST" action="{% url 'addbooktags' %}">
+	  {% csrf_token %}
+	  <div class="form-group">
+	    <label for="exampleFormControlInput1">Tags</label>
+	    <input type = "text" name="tags" class="form-control" id="exampleFormControlInput1">
+	  </div>
+	  <br>	
+	  <input type="hidden" name="book" value="{{this_book.id}}">
+	  <button type="submit" class="btn btn-primary">Add Entry</button>
+	</form>
+<br>
+
 <h4>Add to list</h4>
 <br>
 <hr>
@@ -175,29 +205,7 @@
 	  <button type="submit" class="btn btn-primary">Add Entry</button>
 	</form>
 
-	<h4>Add Media</h4>
-
-	<form method="POST" enctype="multipart/form-data" action="{% url 'addbookmedia' %}">
-	  {% csrf_token %}
-
-	  <div class="form-group">
-	    <label for="exampleFormControlSelect1">Media Type</label>
-	    <select class="form-control" name="img_type" id="exampleFormControlSelect1">
-	      		<option value = "1">Cover</option>
-	      		<option value = "2">Portrait</option>
-	      		<option value = "3">Panorama</option>
-	    </select>
-	  </div>
-	  <br>
-	  <div class="form-group">
-    	<label for="exampleFormControlFile1">File</label>
-    	<input type="file" name = "imagen" class="form-control-file" id="exampleFormControlFile1">
-  	</div>
-	  <br>
-	  <input type="hidden" name="media_type" value="1">
-	  <input type="hidden" name="media_id" value="{{this_book.id}}">
-	  <button type="submit" class="btn btn-primary">Add Entry</button>
-	</form>
+	
 
   </div>
 </div>

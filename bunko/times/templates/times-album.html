@@ -4,6 +4,7 @@
 
 {% block contenido %}
 <article>
+
   {% for m in medias %}
 
   <figure class="figure" style="text-align: center;">
@@ -19,6 +20,8 @@
  <hr>
 <div style="clear:both;"></div>
 {% endfor %}
+<div style="width:100%; text-align:center;">
+<a href="{% url 'mediapage' next_p %}"><button>Next Page</button></a>
 
 </article>
 

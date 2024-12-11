@@ -27,7 +27,7 @@ def busqueda(request):
 
 
 def addwiki(request):
-	wtypes = WikiType.objects.all().order_by('category')
+	wtypes = WikiType.objects.filter(category__in=['blog','character','event','journal','news','review']).order_by('category')
 
 	if request.method == 'POST':
 		this_cat = WikiType.objects.get(pk=int(request.POST.get("cat_id")))
@@ -143,6 +143,14 @@ def addbook(request):
 
 		newC = Credito.objects.create(ctype=credtype, persona = autor, media_type=1, media_id=newB.id)
 
+		
+		
+		if len(request.POST.get("tags",""))>0:
+			tags = request.POST.get("tags","").split(",")
+			for t in tags:
+				bt = BookTag.objects.create(libro=newB,tag=t)
+				bt.save()
+
 		return redirect('/book/{}'.format(newB.id))
 	else:
 		return render(request,'add-book.html',{'personas':personas,'booktypes':booktypes})
@@ -155,7 +163,9 @@ def book(request,bookid):
 
 	barras = ProgressBar.objects.filter(libro=this_book,avance__lt=F('cantidad'))
 
-	return render(request,'view-book.html',{'this_book':this_book,'wtypes':wtypes,'relw':related_wikis,'blistas':listas,'barras':barras})
+	btags = BookTag.objects.filter(libro__id=this_book.id)
+
+	return render(request,'view-book.html',{'this_book':this_book,'btags':btags,'wtypes':wtypes,'relw':related_wikis,'blistas':listas,'barras':barras})
 
 def books(request,y):
 	max_year = Consumo.objects.order_by('-finish_d').first()
@@ -996,7 +1006,39 @@ def addtimesmedia(request):
 	else:
 		return render(request,'add-times-media.html',{})
 
-def mediapage(request):
-	medias = TimesMedia.objects.all().order_by('-id')[0:10]
+def mediapage(request,p):
 
-	return render(request,'times-album.html',{'medias':medias})
+	conteo = TimesMedia.objects.all().count()
+
+	ppp = 10
+
+	paginas = math.ceil(conteo/ppp)
+
+	if (int(p)+1) == paginas:
+		next_p = 0 
+	else:
+		next_p = (int(p)+1)
+
+
+
+	medias = TimesMedia.objects.all().order_by('-id')[int(p)*ppp:(int(p)*ppp)+ppp]
+
+	return render(request,'times-album.html',{'medias':medias,'next_p':next_p,'paginas':paginas,'next_p':next_p})
+
+def addbooktags(request):
+	this_libro = Book.objects.get(pk=int(request.POST.get("book")))
+	tags = request.POST.get("tags","").split(",")
+
+	for t in tags:
+		bt = BookTag.objects.create(libro=this_libro,tag=t)
+		bt.save()
+
+	return redirect('/book/{}'.format(request.POST.get("book")))
+
+def viewbooktag(request,this_tag):
+
+	books = BookTag.objects.filter(tag=this_tag)
+
+	now_tag = this_tag
+
+	return render(request,'view-booktag.html',{'books':books,'now_tag':now_tag})

@@ -58,9 +58,7 @@ urlpatterns = [
 	path('getmovie/', views.moviedbImport, name='moviedbImport'),
 	path('savemovie/', views.savemovie, name='savemovie'),
 	path('addtimesmedia/', views.addtimesmedia, name='addtimesmedia'),
-	path('mediapage/', views.mediapage, name='mediapage'),
-
-	
-
-
+	path('mediapage/<p>', views.mediapage, name='mediapage'),
+	path('addbooktags/', views.addbooktags, name='addbooktags'),
+	path('booktag/<this_tag>', views.viewbooktag, name='viewbooktag'),
 	]
