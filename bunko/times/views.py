@@ -143,8 +143,8 @@ def addbook(request):
 
 		newC = Credito.objects.create(ctype=credtype, persona = autor, media_type=1, media_id=newB.id)
 
-		
-		
+
+
 		if len(request.POST.get("tags",""))>0:
 			tags = request.POST.get("tags","").split(",")
 			for t in tags:
@@ -161,11 +161,13 @@ def book(request,bookid):
 	related_wikis = MediaWiki.objects.filter(media_type=1, media_id=this_book.id).order_by('-id')
 	listas = BookList.objects.all().order_by('listname')
 
+	citas = BookQuote.objects.filter(libro=this_book).order_by('id')
+
 	barras = ProgressBar.objects.filter(libro=this_book,avance__lt=F('cantidad'))
 
 	btags = BookTag.objects.filter(libro__id=this_book.id)
 
-	return render(request,'view-book.html',{'this_book':this_book,'btags':btags,'wtypes':wtypes,'relw':related_wikis,'blistas':listas,'barras':barras})
+	return render(request,'view-book.html',{'this_book':this_book,'btags':btags,'wtypes':wtypes,'relw':related_wikis,'blistas':listas,'barras':barras,'citas':citas})
 
 def books(request,y):
 	max_year = Consumo.objects.order_by('-finish_d').first()
@@ -1002,7 +1004,7 @@ def addtimesmedia(request):
 		ix = request.FILES.get("imagen")
 		newM = TimesMedia.objects.create(title=info,imgtype=1,imagen=ix)
 		newM.save()
-		return redirect('/mediapage')
+		return redirect('/mediapage/0')
 	else:
 		return render(request,'add-times-media.html',{})
 
@@ -1015,7 +1017,7 @@ def mediapage(request,p):
 	paginas = math.ceil(conteo/ppp)
 
 	if (int(p)+1) == paginas:
-		next_p = 0 
+		next_p = 0
 	else:
 		next_p = (int(p)+1)
 
@@ -1037,8 +1039,17 @@ def addbooktags(request):
 
 def viewbooktag(request,this_tag):
 
-	books = BookTag.objects.filter(tag=this_tag)
+	books = BookTag.objects.filter(tag=this_tag).order_by('libro__pub_year')
 
 	now_tag = this_tag
 
 	return render(request,'view-booktag.html',{'books':books,'now_tag':now_tag})
+
+def addbookquote(request):
+	this_libro = Book.objects.get(pk=int(request.POST.get("book_id")))
+	this_quote = request.POST.get("cita")
+
+	newBQ = BookQuote.objects.create(libro = this_libro, quote = this_quote)
+	newBQ.save()
+
+	return redirect('/book/{}'.format(this_libro.id))

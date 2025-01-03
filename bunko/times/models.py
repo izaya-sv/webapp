@@ -473,6 +473,13 @@ class BookTag(models.Model):
 	def __str__(self):
 		return self.tag
 
+class BookQuote(models.Model):
+	libro = models.ForeignKey(Book, on_delete=models.CASCADE)
+	quote = models.TextField()
+
+	def __str__(self):
+		return str(self.id)+'-'+self.quote[0:50]
+
 
 
 

@@ -28,6 +28,8 @@ admin.site.register(BookDuel)
 admin.site.register(MovieDuel)
 admin.site.register(TimesMedia)
 admin.site.register(BookTag)
+admin.site.register(BookQuote)
+
 
 
 

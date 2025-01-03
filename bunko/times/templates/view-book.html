@@ -54,8 +54,17 @@
 
 	{{this_book.cleantext|linebreaks}}
 
-	
-
+	{% if citas %}
+		<h5>Quotes</h5>
+		<ul class="list-group">
+		{% for c in citas %}
+			<li class="list-group-item">
+    		{{c.quote}}     
+  		</li>
+		{% endfor %}
+	</ul>
+	<br>
+	{% endif %}
 	{% if btags %}
 	<h5>Tags</h5>
 	<div style="position: relative;">
@@ -175,6 +184,23 @@
 	  <input type="hidden" name="book_id" value="{{this_book.id}}">
 	  <button type="submit" class="btn btn-primary">Add to this list</button>
 	</form>
+	<br>
+	<hr>
+	<h4>Add Quote</h4>
+	<form method="POST" action="{% url 'addbookquote' %}">
+		{% csrf_token %}
+
+		<div class="form-group">
+	    <label for="exampleFormControlTextarea1">Quote</label>
+	    <textarea name = "cita" class="form-control" id="exampleFormControlTextarea1" rows="6"></textarea>
+	  </div>
+	  <input type="hidden" name="book_id" value="{{this_book.id}}">
+	  <br>
+	  <button type="submit" class="btn btn-primary">Add Quote</button>
+	  <br>
+
+	</form>
+
 	<br>
 	<hr>
 	<h4>Add Related Wiki</h4>

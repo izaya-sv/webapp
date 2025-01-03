@@ -46,7 +46,8 @@
   <div class="col-sm-6 col-lg-6 mb-4">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title"><a href='{% url "show" r.temporada.show.id  %}' style="text-decoration: none;"><span style="color:grey;">[Now Watching]</span><br>{{r.temporada.titulo}}</a></h5>
+          <h5 class="card-title"><a href='{% url "show" r.temporada.show.id  %}' style="text-decoration: none;"><span style="color:grey;">[Now Watching]</span>
+          <br>{% if r.temporada.show.conteo_s == 1 %}{{r.temporada.show.title}}{%else%}{{r.temporada.titulo}}{% endif %}</a></h5>
           <p class="card-text">{{r.temporada.headtext}}</p>
         </div>
       </div>

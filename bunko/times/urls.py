@@ -61,4 +61,5 @@ urlpatterns = [
 	path('mediapage/<p>', views.mediapage, name='mediapage'),
 	path('addbooktags/', views.addbooktags, name='addbooktags'),
 	path('booktag/<this_tag>', views.viewbooktag, name='viewbooktag'),
+	path('addbookquote/', views.addbookquote, name='addbookquote'),
 	]
