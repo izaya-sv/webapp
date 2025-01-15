@@ -62,4 +62,9 @@ urlpatterns = [
 	path('addbooktags/', views.addbooktags, name='addbooktags'),
 	path('booktag/<this_tag>', views.viewbooktag, name='viewbooktag'),
 	path('addbookquote/', views.addbookquote, name='addbookquote'),
+	path('addmovietolist/', views.addmovietolist, name='addmovietolist'),
+	path('movielists/', views.movielists, name='movielists'),
+	path('movielist/<id_lista>', views.movielist, name='movielist'),
+
+	
 	]

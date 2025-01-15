@@ -182,6 +182,16 @@ class Movie(models.Model):
 			ppic = MovieMedia.objects.get(pk=random_pk)
 			return ppic.imagen.url
 
+	@property
+	def last_watch(self):
+		conteo = MovieWatch.objects.filter(film__id=self.id).count()
+		if conteo == 0:
+			rcheck = None
+		else:
+		    robject = MovieWatch.objects.filter(film__id=self.id).latest('-wdate')
+		    rcheck = robject.wdate
+		return conteo
+
 
 class Show(models.Model):
 	title = models.CharField(max_length=512)
@@ -479,6 +489,28 @@ class BookQuote(models.Model):
 
 	def __str__(self):
 		return str(self.id)+'-'+self.quote[0:50]
+
+class MovieList(models.Model):
+	titulo = models.CharField(max_length=512)
+	created_at = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return self.titulo
+
+	@property
+	def conteo(self):
+		cont = MoveListItem.objects.filter(lista__id=self.id).count()
+		return cont
+
+class MoveListItem(models.Model):
+	lista = models.ForeignKey(MovieList, on_delete = models.CASCADE)
+	film = models.ForeignKey(Movie, on_delete = models.CASCADE)
+
+	def __str__(self):
+		return self.lista.titulo +  '@' + self.film.titulo
+
+
+
 
 
 

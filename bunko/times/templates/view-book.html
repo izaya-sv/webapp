@@ -54,32 +54,9 @@
 
 	{{this_book.cleantext|linebreaks}}
 
-	{% if citas %}
-		<h5>Quotes</h5>
-		<ul class="list-group">
-		{% for c in citas %}
-			<li class="list-group-item">
-    		{{c.quote}}     
-  		</li>
-		{% endfor %}
-	</ul>
-	<br>
-	{% endif %}
-	{% if btags %}
-	<h5>Tags</h5>
-	<div style="position: relative;">
+	<div style="clear:both;"></div>
 
-		{% for t in btags %}
-		<a href="{% url 'viewbooktag' t.tag %}"><div style="float:left; margin:0.25em; border: 1px solid grey; padding:0.3em; border-radius: 3px;">
-		 	&nbsp;{{ t.tag }}&nbsp;
-		</div></a>
-		{% endfor %}
-
-	</div>
-	{% endif %}
-
-
-{% if relw %}
+	{% if relw %}
         <div style="clear:both;"></div>
 			<h5>Related Wikis</h5>
 			<div class="row" data-masonry='{"percentPosition": true }'>
@@ -95,7 +72,37 @@
 			       </div>
 			{% endfor %}
 			</div>
+
 			{%endif%}
+
+		{% if btags %}
+	<h5>Tags</h5>
+	<div style="position: relative;">
+
+		{% for t in btags %}
+		<a href="{% url 'viewbooktag' t.tag %}"><div style="float:left; margin:0.25em; border: 1px solid grey; padding:0.3em; border-radius: 3px;">
+		 	&nbsp;{{ t.tag }}&nbsp;
+		</div></a>
+		{% endfor %}
+
+	</div><br><div style="clear:both;"></div><br>
+	{% endif %}
+
+	{% if citas %}
+		<h5>Quotes</h5>
+		<ul class="list-group">
+		{% for c in citas %}
+			<li class="list-group-item">
+    		{{c.quote}}
+  		</li>
+		{% endfor %}
+	</ul>
+	<br>
+	{% endif %}
+
+
+
+
 
 </article>
   </div>
@@ -160,7 +167,7 @@
 	    <label for="exampleFormControlInput1">Tags</label>
 	    <input type = "text" name="tags" class="form-control" id="exampleFormControlInput1">
 	  </div>
-	  <br>	
+	  <br>
 	  <input type="hidden" name="book" value="{{this_book.id}}">
 	  <button type="submit" class="btn btn-primary">Add Entry</button>
 	</form>
@@ -231,7 +238,7 @@
 	  <button type="submit" class="btn btn-primary">Add Entry</button>
 	</form>
 
-	
+
 
   </div>
 </div>

@@ -89,6 +89,27 @@
 	  <button type="submit" class="btn btn-primary">Add Entry</button>
 	</form>
 
+	<br>
+
+	<h4>Add to List</h4>
+
+	<form method="POST" enctype="multipart/form-data" action="{% url 'addmovietolist' %}">
+	  {% csrf_token %}
+
+	  <div class="form-group">
+	    <label for="exampleFormControlSelect1">Select list:</label>
+	    <select class="form-control" name="movie_list" id="exampleFormControlSelect1">
+	    		{% for l in movielists %}
+	    			<option value = "{{ l.id }}">{{l.titulo}}</option>
+	    		{% endfor %}
+	    </select>
+	  </div>
+	  <br>
+	  <input type="hidden" name="movie_id" value="{{this_movie.id}}">
+	  <button type="submit" class="btn btn-primary">Add Entry</button>
+	</form>
+
+	<br>
 
 	<h4>Add Media</h4>
 

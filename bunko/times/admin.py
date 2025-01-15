@@ -29,6 +29,8 @@ admin.site.register(MovieDuel)
 admin.site.register(TimesMedia)
 admin.site.register(BookTag)
 admin.site.register(BookQuote)
+admin.site.register(MoveListItem)
+admin.site.register(MovieList)
 
 
 

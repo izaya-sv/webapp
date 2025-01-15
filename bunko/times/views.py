@@ -255,8 +255,9 @@ def movie(request,movieid):
 	related_wikis = MediaWiki.objects.filter(media_type=2, media_id=this_movie.id).order_by('-id')
 	director = MovieCredit.objects.filter(film__id=this_movie.id, credit = 'Director' )
 	cast = MovieCredit.objects.filter(film__id=this_movie.id, credit = 'Main Cast')
+	movielists = MovieList.objects.all().order_by('titulo')
 
-	return render(request,'view-movie.html',{'this_movie':this_movie,'wtypes':wtypes,'relw':related_wikis,'director':director,'cast':cast})
+	return render(request,'view-movie.html',{'movielists':movielists,'this_movie':this_movie,'wtypes':wtypes,'relw':related_wikis,'director':director,'cast':cast})
 
 def watchmovie(request):
 	wmovie = Movie.objects.get(pk=int(request.POST.get("movieid")))
@@ -1053,3 +1054,23 @@ def addbookquote(request):
 	newBQ.save()
 
 	return redirect('/book/{}'.format(this_libro.id))
+
+def addmovietolist(request):
+	this_movie = Movie.objects.get(pk=int(request.POST.get("movie_id")))
+	this_lista = MovieList.objects.get(pk=int(request.POST.get("movie_list")))
+
+	newLine = MoveListItem.objects.create(lista = this_lista, film = this_movie)
+	newLine.save()
+
+	return redirect('/movie/{}'.format(this_movie.id))
+
+def movielists(request):
+	listas = MovieList.objects.all().order_by('titulo')
+	return render(request,'movielists.html',{'listas':listas})
+
+def movielist(request,id_lista):
+	this_lista = MovieList.objects.get(pk=int(id_lista))
+	films = MoveListItem.objects.filter(lista=this_lista)
+	return render(request,'movielist.html',{'films':films,'this_lista':this_lista})
+
+
